@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chaino"
+version = "0.1.0"
+description = "python lib for Arduino Chaino device"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [{ name = "Jang-Hyun Park", email = "salesiopark@gmail.com" }]
+keywords = ["arduino", "serial", "i2c"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+dependencies = [
+  # "requests>=2.32.0,<3.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/salesiopark/chaino"
+Issues = "https://github.com/salesiopark/chaino/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
