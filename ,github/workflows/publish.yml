@@ -6,6 +6,7 @@ on:
       - main            # main push 시 -> TestPyPI 배포
     tags:
       - "v*"            # 태그(vX.Y.Z) push 시 -> 실 PyPI 배포
+  workflow_dispatch:    # 수동 실행 가능하게 추가
 
 jobs:
   build:
@@ -33,7 +34,7 @@ jobs:
 
   publish-testpypi:
     needs: build
-    if: github.ref == 'refs/heads/main'     # main 브랜치 push일 때만
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
@@ -58,6 +59,9 @@ jobs:
         with:
           name: dist
           path: dist
+
+      # checkout이 필요함 - pyproject.toml 파일을 읽기 위해
+      - uses: actions/checkout@v4
 
       # (선택) 태그와 pyproject.toml의 버전 일치 검사
       - name: Check tag matches project version

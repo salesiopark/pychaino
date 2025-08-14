@@ -112,6 +112,7 @@ if sys.implementation.name == "cpython":#=======================================
                     print_yellow(f'Serial("{e[0]}"): {test_obj._chaino_name}')
                 else:
                     print(f'Serial("{e[0]}"): {e[1]}')
+            print("Chaino.scan() can detect Chaino \033[31m**MASTER**\033[0m devices only.")
 
 
         def __init__(self, port:str, i2c_addr: int=0):
@@ -158,55 +159,45 @@ if sys.implementation.name == "cpython":#=======================================
             serial_or_none = self._check_connection()
             if serial_or_none is None:
                     print_err(f'\nSerial port("{self._port}") does not connected to Chaino device.')
-                    sys.exit() 
+                    #sys.exit() 
+                    #raise Exception(f'Serial port("{self._port}") does not connected to Chaino device.')
             else:
                 Chaino._serials[self._port] = self._serial
 
 
 
         def _serial_write(self, packet: bytes):
-            #try:
-                self._serial.write(packet+bEOT) #끝에 bEOT를 붙여서 전송
-                #self._serial.flush()
+            self._serial.write(packet+bEOT) #끝에 bEOT를 붙여서 전송
+            #self._serial.flush() # AI가 flush()는 필요치 않다고 함
             
-            #except Exception as e:
-            #    print_err(f"Serial Write Error {e}")
 
         
 
         # (2025/07/29:수정) serial port에서 {EOT}까지 패킷을 읽는다
         def _read_packet(self) -> bytes:
-            #try:
-                #CRC16에 우연히 \x04(EOT)가 포함될 수 있으므로
-                #첫 2byte를 먼저 강제로 읽은 후, 그 나머지를 {EOT}까지 읽는다.
-                #while self._serial.in_waiting < 2 : pass #적어도 2byte가 올때까지 대기
-                packet = self._serial.read(2) # CRC16(2 bytes)를 먼저 읽고
-                line = self._serial.read_until(bEOT, size=None)#나머지를 EOT까지 읽는다
-                if line.endswith(bEOT):
-                    return packet + line[:-1]  # EOT 제거
-                else:
-                    print_err("Fail to receive [EOT] via Serial")
-                    #sys.exit()
-                    self._clear_buffers() # 버퍼를 클리어하고 None을 반환
-                    return packet        
+            #CRC16에 우연히 \x04(EOT)가 포함될 수 있으므로
+            #첫 2byte를 먼저 강제로 읽은 후, 그 나머지를 {EOT}까지 읽는다.
+            #while self._serial.in_waiting < 2 : pass #적어도 2byte가 올때까지 대기
+            packet = self._serial.read(2) # CRC16(2 bytes)를 먼저 읽고
+            line = self._serial.read_until(bEOT, size=None)#나머지를 EOT까지 읽는다
+            if line.endswith(bEOT):
+                return packet + line[:-1]  # EOT 제거
+            else:
+                print_err("Fail to receive [EOT] via Serial")
+                #sys.exit()
+                self._clear_buffers() # 버퍼를 클리어하고 None을 반환
+                return packet        
 
-            #except serial.SerialException as e:
-            #    print_err(f"Serial Read Error: {e}")
-            #    self._clear_buffers()
 
 
         def _clear_buffers(self):
+            self._serial.reset_input_buffer()
+            self._serial.reset_output_buffer()
+            time.sleep(0.1)  # 버퍼 안정화 대기
+            # 추가로 남은 데이터가 있다면 읽어서 버림
+            while self._serial.in_waiting > 0: self._serial.read(self._serial.in_waiting)
 
-            #try:
-                self._serial.reset_input_buffer()
-                self._serial.reset_output_buffer()
-                time.sleep(0.1)  # 버퍼 안정화 대기
-                # 추가로 남은 데이터가 있다면 읽어서 버림
-                while self._serial.in_waiting > 0: self._serial.read(self._serial.in_waiting)
-            #except Exception as e:
-            #    print(f"버퍼 클리어 중 오류: {e}")
 
-        
 
         """
         RP2040의 함수실행 요구 패킷 생성. 첫 2byts이후는 ASCII문자열. [...]은 option
@@ -230,9 +221,6 @@ if sys.implementation.name == "cpython":#=======================================
 
             packet = self._gen_exec_func_packet(func_num, *args)
             #print_packet(packet)
-
-            #try:
-
             self._serial_write(packet) #(1) packet 송신
 
             for try_count in range(Chaino._MAX_RETRIES):
@@ -299,10 +287,6 @@ if sys.implementation.name == "cpython":#=======================================
                     #print_err("Function execution fail - "+err_msg)
                     #sys.exit()
                     raise Exception("Function execution fail: "+err_msg)       
-
-
-            #except serial.SerialException as e:
-            #        raise("Serial communication fail: "+str(e))
 
 
 
