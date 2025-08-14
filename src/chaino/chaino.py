@@ -5,6 +5,7 @@
 #2025/08/13 : Cpython과 micropython에서 동시에 사용되는 함수들 분리
 
 import sys
+IS_CPYTHON = (sys.implementation.name == "cpython")
 
 # 구분자들
 RS = "\x1e"  #코드 주석에서 {RS}로 표시
@@ -17,7 +18,7 @@ PACKET_RQ_RESEND = (0x1861).to_bytes(2, 'big') + b'E'
 #######################################################################
 # python 종류별로 crc_hqx 함수를 정의한다.
 #######################################################################
-if sys.implementation.name == "cpython":
+if IS_CPYTHON:
     
     from binascii import crc_hqx # CPython 에서만 존재
     
@@ -61,12 +62,27 @@ def is_crc_matched(packet: bytes) -> bool:
     #print(f"received CRC:0x{hex(received_crc)}, computed CRC:0x{hex(computed_crc)}")
     return received_crc == computed_crc
 
-'''
-def print_packet(packet: bytes, header="", end="\n"):
-    str_crc16, bytes_data = f"[0x{packet[:2].hex()}]", packet[2:]
-    replaced = bytes_data.replace(bRS, b'{RS}').replace(bEOT, b'{EOT}')
-    print(header + str_crc16 + str(replaced)[2:-1] + f"  : {len(packet)} bytes", end=end)
-'''
+
+"""
+RP2040의 함수실행 요구 패킷 생성. 첫 2byts이후는 ASCII문자열. [...]은 option
+패킷 구조 : [crc:2byte]'R'{RS}AD{RS}FN [ {RS}arg1{RS}arg2{RS} ... {RS}argn ] {EOT}
+첫 글자가 'R'이라면 함수 실행을 의미하며 위의 구조를 가진다
+    AD (i2c_addr) : 두 자리(고정) 16진수
+    FN (func_num) : 한 자리(혹은 두 자리) 16진수 - 아두이노에서 최대 200개까지 등록
+"""
+def gen_exec_func_packet(i2c_addr: int, func_num: int, *args) -> bytes:
+    # 1) map_args에서 True는 "1"로 False는 "0"으로 교체한 후 패킷 생성
+    if i2c_addr == -1:  # micropython에서 호출한 경우
+        parts = [f"{func_num:x}"]
+    else:               # cpython에서 호출한 경우
+        parts = ["R", f"{i2c_addr:02x}", f"{func_num:x}"]
+    parts.extend(map_args(x) for x in args)
+    payload = RS.join(parts).encode('ascii')
+    bytes_crc = gen_CRC16_XMODEM(payload)
+    packet = bytes_crc + payload
+    #print_packet(packet,"packet sent:")
+    return packet
+
 
 def str_packet(packet: bytes):
     str_crc16, bytes_data = f"<[0x{packet[:2].hex()}]", packet[2:]
@@ -90,7 +106,7 @@ def print_yellow(msg: str, end:str = "\n"): #BLUE text
 
 
 
-if sys.implementation.name == "cpython":#===========================================
+if IS_CPYTHON:#===========================================
 
     import serial # pyserial을 install해야 한다
     import serial.tools.list_ports
@@ -208,7 +224,6 @@ if sys.implementation.name == "cpython":#=======================================
         첫 글자가 'R'이라면 함수 실행을 의미하며 위의 구조를 가진다
             AD (i2c_addr) : 두 자리(고정) 16진수
             FN (func_num) : 한 자리(혹은 두 자리) 16진수 - 아두이노에서 최대 200개까지 등록
-        """
         def _gen_exec_func_packet(self, func_num: int, *args) -> bytes:
             # 1) map_args에서 True는 "1"로 False는 "0"으로 교체한 후 패킷 생성
             parts = ["R", f"{self._i2c_addr:02x}", f"{func_num:x}"]
@@ -218,12 +233,14 @@ if sys.implementation.name == "cpython":#=======================================
             packet = bytes_crc + payload
             #print_packet(packet,"packet sent:")
             return packet
+        """
 
 
         def exec_func(self, func_num: int, *args):
 
-            packet = self._gen_exec_func_packet(func_num, *args)
+            #packet = self._gen_exec_func_packet(func_num, *args)
             #print_packet(packet)
+            packet = gen_exec_func_packet(self._i2c_addr, func_num, *args)
             self._serial_write(packet) #(1) packet 송신
 
             for try_count in range(Chaino._MAX_RETRIES):
@@ -324,54 +341,36 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
         @staticmethod
         def scan(): #i2c 포트 스캔 함수
 
-            print("I2C1: 스캔 시작...")
-            devices = Chaino._Wire1.scan()
+            print("I2C1 scan starts ... ")
+            addr_lst = Chaino._Wire1.scan()
 
-            if devices:
-                print("발견된 장치 개수:", len(devices))
-                for dev in devices:
-                    print(" - 주소: 0x{:02X}".format(dev))
+            if addr_lst:
+                for addr in addr_lst:
+                    c = Chaino(addr)
+                    print_yellow(c.who())
             else:
-                print("장치가 발견되지 않았습니다.")
-                pass
-
+                print_err("No slave devices found.")
 
 
         def __init__(self, slave_addr:int):
             
             self._slave_addr : int = slave_addr
             
-
-
-
-        """
-        RP2040의 함수실행 요구 패킷 생성. 첫 2byts이후는 ASCII문자열
-        패킷 구조 : [crc:2byte]FN[{RS}arg1{RS}arg2{RS} ... {RS}argn]
-            FN (func_num) : 한 자리(혹은 두 자리) 16진수
-        """
-        def _gen_exec_func_packet(self, func_num: int, *args) -> bytes:
-            # 1) map_args에서 True는 "1"로 False는 "0"으로 교체한 후 패킷 생성
-            parts = [f"{func_num:x}"]
-            parts.extend(map_args(x) for x in args)
-            payload = RS.join(parts).encode('ascii')
-            bytes_crc = gen_CRC16_XMODEM(payload)
-            packet = bytes_crc + payload
-            #print_packet(packet,"packet sent:")
-            return packet
-
-
+        
         
         def exec_func(self, func_num:int, *args):
             
             addr   = self._slave_addr
-            packet = self._gen_exec_func_packet(func_num, *args)
+            #packet = self._gen_exec_func_packet(func_num, *args)
+            packet = gen_exec_func_packet(-1, func_num, *args)
 
             for attempt in range(Chaino._MAX_RETRY):
                 try:
                     Chaino._Wire1.writeto(addr, packet)
                     buf = Chaino._Wire1.readfrom(addr, 3)
                 except OSError:
-                    if attempt == Chaino._MAX_RETRY - 1: raise
+                    if attempt == Chaino._MAX_RETRY - 1:
+                        raise Exception(f"Slave(addr:0x{addr:02x}) write error")
                     continue
 
                 header, ret_len, rx_ck = buf[0], buf[1], buf[2]
@@ -380,8 +379,8 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
                 # (a) 슬레이브가 'E' 알림 보냄  (b) 체크섬 불일치 → 재시도
                 if header == ord('E') or rx_ck != calc_ck:
                     if attempt == Chaino._MAX_RETRY - 1:
-                        why = "slave error" if header == ord('E') else "checksum mismatch"
-                        raise Exception(f"I2C header invalid: {why}")
+                        why = "crc error" if header == ord('E') else "checksum mismatch"
+                        raise Exception(f"Slave(addr:0x{addr:02x}) header invalid: {why}")
                     continue
 
             
@@ -389,14 +388,22 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
                 try:
                     packet_ret = Chaino._Wire1.readfrom(addr, ret_len)
                 except OSError:
-                    if attempt == Chaino._MAX_RETRY - 1: raise
+                    if attempt == Chaino._MAX_RETRY - 1:
+                        raise Exception(f"Slave(addr:0x{addr:02x}) read error")
                     continue
 
                 is_crc_ok = is_crc_matched(packet_ret)
                 if not is_crc_ok:
-                    if attempt == Chaino._MAX_RETRY - 1: raise
+                    if attempt == Chaino._MAX_RETRY - 1:
+                        raise Exception(f"Received packet from slave(addr:0x{addr:02x}) CRC error")
                     continue
                 
+                if packet_ret[2] == ord('E'): #packet_ret[2]는 첫 글자(header)
+                    if attempt == Chaino._MAX_RETRY - 1:
+                        raise Exception(f"Sent packet to slave(addr:0x{addr:02x}) CRC error")
+                    continue
+
+
             # (4) packet_ret에 crc 오류가 없다면 -> 첫 문자는 'E','S','F' 세 경우뿐
             data_packet = packet_ret[2:]
             char0 = chr(data_packet[0])
@@ -412,10 +419,10 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
                 
             elif char0 == 'F':# 함수실행 실패: F{RS}err_msg
                 err_msg = str(data_packet[2:])[2:-1]
-                raise Exception("Function execution fail: "+err_msg)       
+                raise Exception("Slave(addr:0x{addr:02x}) function execution fail: "+err_msg)       
 
             # 여기 오면 모두 실패
-            raise Exception("Retry limit exceeded")
+            raise Exception("Slave(addr:0x{addr:02x}) Retry limit exceeded")
     
     
         def set_i2c_addr(self, new_addr:int): #201번 함수
@@ -439,9 +446,9 @@ if __name__=="__main__":
 
     import time
 
-    c = Chaino(0x08)
+    c = Chaino(0x40)
     print(c.exec_func(203))
-    for _ in range(1000):
+    for _ in range(100):
         c.set_neopixel(255,0,0)
         print(c.exec_func(4,26))
         time.sleep(0.1)
@@ -451,3 +458,4 @@ if __name__=="__main__":
         c.set_neopixel(0,0,255)
         print(c.exec_func(4,26))
         time.sleep(0.1)
+
