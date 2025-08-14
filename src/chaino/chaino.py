@@ -18,8 +18,11 @@ PACKET_RQ_RESEND = (0x1861).to_bytes(2, 'big') + b'E'
 # python 종류별로 crc_hqx 함수를 정의한다.
 #######################################################################
 if sys.implementation.name == "cpython":
+    
     from binascii import crc_hqx # CPython 에서만 존재
+    
 else: # Micropython에서는 binascii라이브러리에 crc_hqx가 없으므로 직접 구현
+    
     def crc_hqx(data: bytes, value: int = 0) -> int:
         crc = value & 0xFFFF
         for b in data:
@@ -39,7 +42,7 @@ else: # Micropython에서는 binascii라이브러리에 crc_hqx가 없으므로 
 C/C++로 구현된 코드도 쉽게 찾을 수 있고 검증도 용이하다.
 '''
 def gen_CRC16_XMODEM(payload: bytes) -> bytes:
-    return crc_hqx(payload, 0).to_bytes(2, byteorder='big')
+    return crc_hqx(payload, 0).to_bytes(2, 'big')
 
 
 #진리값만 "1"/"0"으로 만들고 나머지는 그대로 str로 변환
@@ -53,7 +56,7 @@ def map_args(x):
 """
 def is_crc_matched(packet: bytes) -> bool:
     if len(packet) <= 2: return False #적어도 crc16+header 3바이트는 되어야 함
-    received_crc = int.from_bytes(packet[:2], byteorder='big')
+    received_crc = int.from_bytes(packet[:2], 'big')
     computed_crc = crc_hqx(packet[2:], 0)
     #print(f"received CRC:0x{hex(received_crc)}, computed CRC:0x{hex(computed_crc)}")
     return received_crc == computed_crc
@@ -309,8 +312,142 @@ if sys.implementation.name == "cpython":#=======================================
 
 else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=============================
 
-
+    from machine import Pin, I2C
+    
+    
     class Chaino:    
         
+        #chaino는 I2C1을 사용
+        _Wire1 = I2C(1, sda=Pin(2), scl=Pin(3), freq=400000)
+        _MAX_RETRY = 3
+        
+        @staticmethod
         def scan(): #i2c 포트 스캔 함수
-            pass
+
+            print("I2C1: 스캔 시작...")
+            devices = Chaino._Wire1.scan()
+
+            if devices:
+                print("발견된 장치 개수:", len(devices))
+                for dev in devices:
+                    print(" - 주소: 0x{:02X}".format(dev))
+            else:
+                print("장치가 발견되지 않았습니다.")
+                pass
+
+
+
+        def __init__(self, slave_addr:int):
+            
+            self._slave_addr : int = slave_addr
+            
+
+
+
+        """
+        RP2040의 함수실행 요구 패킷 생성. 첫 2byts이후는 ASCII문자열
+        패킷 구조 : [crc:2byte]FN[{RS}arg1{RS}arg2{RS} ... {RS}argn]
+            FN (func_num) : 한 자리(혹은 두 자리) 16진수
+        """
+        def _gen_exec_func_packet(self, func_num: int, *args) -> bytes:
+            # 1) map_args에서 True는 "1"로 False는 "0"으로 교체한 후 패킷 생성
+            parts = [f"{func_num:x}"]
+            parts.extend(map_args(x) for x in args)
+            payload = RS.join(parts).encode('ascii')
+            bytes_crc = gen_CRC16_XMODEM(payload)
+            packet = bytes_crc + payload
+            #print_packet(packet,"packet sent:")
+            return packet
+
+
+        
+        def exec_func(self, func_num:int, *args):
+            
+            addr   = self._slave_addr
+            packet = self._gen_exec_func_packet(func_num, *args)
+
+            for attempt in range(Chaino._MAX_RETRY):
+                try:
+                    Chaino._Wire1.writeto(addr, packet)
+                    buf = Chaino._Wire1.readfrom(addr, 3)
+                except OSError:
+                    if attempt == Chaino._MAX_RETRY - 1: raise
+                    continue
+
+                header, ret_len, rx_ck = buf[0], buf[1], buf[2]
+                calc_ck = (~(header + ret_len)) & 0xFF
+
+                # (a) 슬레이브가 'E' 알림 보냄  (b) 체크섬 불일치 → 재시도
+                if header == ord('E') or rx_ck != calc_ck:
+                    if attempt == Chaino._MAX_RETRY - 1:
+                        why = "slave error" if header == ord('E') else "checksum mismatch"
+                        raise Exception(f"I2C header invalid: {why}")
+                    continue
+
+            
+            for attempt in range(Chaino._MAX_RETRY):
+                try:
+                    packet_ret = Chaino._Wire1.readfrom(addr, ret_len)
+                except OSError:
+                    if attempt == Chaino._MAX_RETRY - 1: raise
+                    continue
+
+                is_crc_ok = is_crc_matched(packet_ret)
+                if not is_crc_ok:
+                    if attempt == Chaino._MAX_RETRY - 1: raise
+                    continue
+                
+            # (4) packet_ret에 crc 오류가 없다면 -> 첫 문자는 'E','S','F' 세 경우뿐
+            data_packet = packet_ret[2:]
+            char0 = chr(data_packet[0])
+                
+            if char0 == 'S':# 함수실행 성공: S{RS}args
+                ret_vals = data_packet[2:].split(bRS)   # bytes 분할
+                # args패킷이 비어있어도 ret_vals는 크기가 1이다([b''])
+                if len(ret_vals) == 1:
+                    if ret_vals[0]==b'': return None  #반환값이 없는 경우
+                    else: return ret_vals[0].decode() #반환값이 하나인 경우
+                else:
+                    return [x.decode() for x in ret_vals] #리스트로 반환
+                
+            elif char0 == 'F':# 함수실행 실패: F{RS}err_msg
+                err_msg = str(data_packet[2:])[2:-1]
+                raise Exception("Function execution fail: "+err_msg)       
+
+            # 여기 오면 모두 실패
+            raise Exception("Retry limit exceeded")
+    
+    
+        def set_i2c_addr(self, new_addr:int): #201번 함수
+            if self._slave_addr != new_addr:
+                return self.exec_func(201, new_addr)
+            else:
+                return f"I2C address is already set to 0x{self._i2c_addr:02x}."
+
+        
+        def set_neopixel(self, r:int, g:int, b:int): #202번 함수
+            self.exec_func(202, r, g, b)
+
+
+        def who(self): #203번 함수
+            return self.exec_func(203)
+        
+
+
+
+if __name__=="__main__":
+
+    import time
+
+    c = Chaino(0x08)
+    print(c.exec_func(203))
+    for _ in range(1000):
+        c.set_neopixel(255,0,0)
+        print(c.exec_func(4,26))
+        time.sleep(0.1)
+        c.set_neopixel(0,255,0)
+        print(c.exec_func(4,26))
+        time.sleep(0.1)
+        c.set_neopixel(0,0,255)
+        print(c.exec_func(4,26))
+        time.sleep(0.1)

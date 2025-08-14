@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chaino"
-version = "0.1.1"
+version = "0.2.0"
 description = "python lib for Arduino Chaino device"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -18,12 +18,12 @@ classifiers = [
 ]
 
 dependencies = [
-  "pyserial>=3.5,<4.0"   # 권장: 하위 호환을 위해 상한도 지정
+  #"pyserial>=3.5,<4.0"   # micropython에서 불가하기 때문에 뺀다
 ]
 
 [project.urls]
-Homepage = "https://github.com/salesiopark/chaino"
-Issues = "https://github.com/salesiopark/chaino/issues"
+Homepage = "https://github.com/salesiopark/pychaino"
+Issues = "https://github.com/salesiopark/pychaino/issues"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
