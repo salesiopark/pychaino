@@ -389,12 +389,10 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
                         raise Exception(f"Received packet from slave(addr:0x{addr:02x}) CRC error")
                     continue
                 
-                if packet_ret[2] == ord('E'): #packet_ret[2]는 첫 글자(header)
-                    if attempt == Chaino._MAX_RETRIES - 1:
-                        raise Exception(f"Sent packet to slave(addr:0x{addr:02x}) CRC error")
-                    continue
-
-                return self._parse_response(packet_ret[2:])
+                if packet_ret[2] == ord('S'): #성공
+                    return self._parse_response(packet_ret[2:])
+                else: #'S'가 아니면 'F'임
+                    raise Exception(f"Fail to execute function#{func_num} at the slave(0x{addr:02x})")
 
             # 여기 오면 모두 실패
             raise Exception("Slave(addr:0x{addr:02x}) Retry limit exceeded")
