@@ -2,7 +2,7 @@ from .chaino import Chaino          # CPython 패키지 환경
 
 
 import sys
-IS_MICROPY = (sys.implementation.name == "micropython")
+IS_CPYTHON = (sys.implementation.name == "cpython")
 
 
 class _HanaCommon:
@@ -32,18 +32,18 @@ class _HanaCommon:
         self.exec_func(5, pin, duty)
 
 
-if IS_MICROPY:
+if IS_CPYTHON:
+    
+    class Hana(_HanaCommon, Chaino):
+        """CPython: Chaino(port, i2c_addr=0) 시그니처 가정"""
+        def __init__(self, port, i2c_addr: int = 0):
+            Chaino.__init__(self, port, i2c_addr)
+            
+else:
     
     class Hana(_HanaCommon, Chaino):
         """MicroPython: Chaino(slave_addr:int) 시그니처 가정"""
         def __init__(self, i2c_addr: int):
             # MicroPython용 Chaino는 (slave_addr)만 받는다고 가정
             Chaino.__init__(self, i2c_addr)
-            
-else:
-    
-    class Hana(_HanaCommon, Chaino):
-        """CPython: Chaino(port, i2c_addr=0) 시그니처 가정"""
-        def __init__(self, port, i2c_addr: int = 0):
-            Chaino.__init__(self, port, i2c_addr)
 
