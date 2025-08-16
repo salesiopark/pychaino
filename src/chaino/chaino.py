@@ -144,7 +144,7 @@ class _ChainoBase:
         
     
     # 공통 인터페이스 메소드들
-    def set_i2c_addr(self, new_addr: int):
+    def set_addr(self, new_addr: int):
         """201번 함수 - I2C 주소 설정"""
         if self._addr != new_addr:
             return self.exec_func(201, new_addr)

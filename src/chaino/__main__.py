@@ -49,7 +49,7 @@ def _cmd_change(args) -> int:
         # Note: We do not pass an old/current address here, by design.
         # The Chaino implementation should handle the current target address internally.
         master = Chaino(args.port)
-        print( master.set_i2c_addr(new_addr) )  # firmware must implement this
+        print( master.set_addr(new_addr) )  # firmware must implement this
         return 0
     except Exception as e:
         print(f"[ERROR] Failed to change I2C address: {e}")
