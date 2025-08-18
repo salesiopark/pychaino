@@ -1,8 +1,44 @@
-'''
-2025/07/15 : 최초 버전 작성
-2025/07/26 : CRC16을 packet의 첫 2byte에 숫자로 첨부 -> packet구조와 알고리듬 단순화
-'''
-#2025/08/13 : Cpython과 micropython에서 동시에 사용되는 함수들 분리
+#2025/07/15 : 최초 버전 작성
+"""
+Chaino Protocol Client Library
+==============================
+
+This module provides the Python client-side implementation for the Chaino protocol,
+allowing communication with Chaino-enabled Arduino devices. It supports both standard
+CPython (via Serial/pyserial) and MicroPython (via I2C).
+
+The primary entry point is the :class:`Chaino` class, which abstracts the low-level
+details of packet creation, CRC checking, and communication.
+
+CPython (Serial) Usage:
+-----------------------
+.. code-block:: python
+
+    from chaino import Chaino
+
+    # Connect to the master device on COM9
+    master = Chaino("COM9")
+    print(master.who())
+
+    # Connect to a slave device at I2C address 0x42 via the master on COM9
+    slave = Chaino("COM9", i2c_addr=0x42)
+    slave.set_neopixel(255, 0, 0) # Set slave's LED to red
+
+MicroPython (I2C) Usage:
+------------------------
+.. code-block:: python
+
+    from chaino import Chaino
+
+    # Scan for connected slave devices on the I2C bus
+    Chaino.scan()
+
+    # Connect to a slave device at I2C address 0x42
+    slave = Chaino(0x42)
+    print(slave.who())
+    slave.set_neopixel(0, 255, 0) # Set slave's LED to green
+"""
+
 
 import sys
 import time # micropython에도 time모듈이 있다.
@@ -112,7 +148,6 @@ def print_yellow(msg: str, end:str = "\n"): #BLUE text
 ########################################################################
 
 class _ChainoBase:
-    """CPython과 MicroPython Chaino 클래스의 공통 기능"""
     
     _MAX_RETRIES = 3
     
@@ -147,25 +182,68 @@ class _ChainoBase:
     
     # 공통 인터페이스 메소드들
     def who(self) -> str:
+        """
+        Gets the identification string of the target device.
+
+        The string is the device name that is set in the Arduino firmware
+        which starts as "Chaino_".
+
+        :return: The identification string, e.g., "Chaino_Hana", "Chaino_Unknown".
+        :rtype: str
+        """
         return self.exec_func(201)
     
     
     def get_version(self) -> str:
+        """
+        Gets the firmware version string of the target device.
+
+        :return: The firmware version string, e.g., "Chaino_Hana Firmware v0.9.4".
+        :rtype: str
+        """
         return self.exec_func(202)
     
     
     def get_addr(self) -> str:
+        """
+        Gets the currently configured I2C address of the target device.
+
+        :return: The I2C address as a hexadecimal string, e.g., "0x40".
+        :rtype: str
+        """
         int_addr = int(self.exec_func(203))
         return f"0x{int_addr:2x}"
     
     
     def set_addr(self, new_addr: int):
+        """
+        Changes the I2C address of the target device.
+
+        This change is written to the device's EEPROM, making it persistent
+        across power cycles. **A device reset is required for the new address
+        to take effect.**
+
+        :param new_addr: The new 7-bit I2C address to set (e.g., 0x45).
+        :type new_addr: int
+        :return: A status message from the device indicating the result.
+        :rtype: str
+        """
         if self._addr != new_addr:
             return self.exec_func(204, new_addr)
         else:
             return f"I2C address is already set to 0x{self._addr:02x}."
     
     def set_neopixel(self, r: int, g: int, b: int):
+        """
+        Sets the color of the onboard NeoPixel LED on the target device.
+
+        :param r: The red component of the color (0-255).
+        :type r: int
+        :param g: The green component of the color (0-255).
+        :type g: int
+        :param b: The blue component of the color (0-255).
+        :type b: int
+        """
         self.exec_func(205, r, g, b)
 
 
@@ -183,12 +261,38 @@ if IS_CPYTHON:#===========================================
 
 
     class Chaino (_ChainoBase):
+        """
+        The primary client class for communicating with a Chaino-enabled device from CPython.
+
+        This class handles serial communication with a Chaino master device. It can send
+        commands to the master itself or relay them to a specific I2C slave device
+        connected to the master. It manages packet formatting, CRC checksums, and
+        communication retries automatically.
+        """
+
         
         _SERIAL_TIMEOUT = 0.1 #serial timeout
         _serials = {} 
 
         @staticmethod
         def scan(): #serial 포트 스캔 함수
+            """
+            Scans available serial ports for connected Chaino master devices.
+
+            This method iterates through all detected serial ports, attempts to
+            connect, and verifies if each is a Chaino master by sending a handshake
+            command. It prints a list of found Chaino devices and other ports.
+
+            .. code-block:: python
+
+                Chaino.scan()
+            
+            Example Output::
+
+                Serial("COM9"): Chaino_Hana (I2C addr.:0x40)
+                Serial("COM3"): Not a Chaino (master) device
+                Note: Chaino.scan() can detect **MASTER** Chaino devices only.
+            """
             ports = serial.tools.list_ports.comports()
             port_list = [(port.device, port.description) for port in ports]
             for s in port_list: #print(f"'{e[0]}' : {e[1]}")
@@ -204,6 +308,22 @@ if IS_CPYTHON:#===========================================
 
 
         def ping(self):
+            """
+            Measures the round-trip communication latency to the target device.
+
+            This method sends a simple command (`who()`) and measures the time it
+            takes to receive a response. The result, in milliseconds, is printed
+            to the console. This is useful for checking connection health and speed.
+
+            .. code-block:: python
+            
+                device = Chaino("COM9")
+                device.ping()
+
+            Example Output::
+
+                ping... elapsed time to execute who() : 0.934 ms
+            """
             print("ping...", end="")
             start_time = time.time()   # 시작 시간 기록
             self.who()
@@ -213,6 +333,30 @@ if IS_CPYTHON:#===========================================
 
 
         def __init__(self, port:str, i2c_addr: int=0):
+            """
+            Initializes a connection to a Chaino device over a serial port.
+
+            If a connection for the given port does not already exist, it will be
+            created and verified. If it exists, the existing connection is reused.
+
+            :param port: The name of the serial port (e.g., "COM9" on Windows,
+                         "/dev/ttyACM0" on Linux).
+            :type port: str
+            :param i2c_addr: The 7-bit I2C address of the target slave device.
+                             If 0 (default), commands are sent to the master
+                             device connected via serial.
+            :type i2c_addr: int
+            :raises Exception: If the serial port cannot be opened or if the
+                               device on the port is not a valid Chaino master.
+            
+            .. code-block:: python
+
+                # Connect to the master device itself
+                master_device = Chaino("COM9")
+
+                # Target a slave device with I2C address 0x42 through the same master
+                slave_device = Chaino("COM9", 0x42)
+            """
             super().__init__(i2c_addr)
             self._port = port
 
@@ -283,7 +427,33 @@ if IS_CPYTHON:#===========================================
 
 
         def exec_func(self, func_num: int, *args):
+            """
+            Executes a function by its ID on the target Chaino device.
 
+            This is the core low-level method for sending commands. It constructs a
+            Chaino packet with the specified function ID and arguments, sends it over
+            serial, and handles the response, including CRC checks and retries.
+            Higher-level methods like `who()` or `set_neopixel()` use this internally.
+
+            :param func_num: The integer ID of the function to execute on the
+                             Arduino device (e.g., 1~200 for user-defined functions).
+            :type func_num: int
+            :param args: A variable number of arguments to pass to the remote function.
+                         Arguments are automatically converted to strings.
+            :return: The value(s) returned from the remote function. Can be ``None`` if
+                     there's no return value, a ``str`` for a single return value, or a
+                     ``list[str]`` for multiple return values.
+            :rtype: None | str | list[str]
+            :raises Exception: If communication fails after multiple retries, a CRC
+                               error persists, or the remote function reports an error.
+
+            .. code-block:: python
+
+                # Assuming a function with ID 12 is registered on the Arduino
+                adc_str = master.exec_func(12, 13)
+                adc = int(adc_str)
+                print(f"adc result: {adc}")
+            """
             packet = gen_exec_func_packet(self._addr, func_num, *args)
             #print_packet(packet)
             self._serial_write(packet) #(1) packet 송신
@@ -345,14 +515,36 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
     
     
     class Chaino(_ChainoBase):    
-        
+        """
+        The primary client class for communicating with a Chaino device from MicroPython.
+
+        This class acts as an I2C master to communicate with Chaino slave devices.
+        It manages I2C transactions, packet formatting, CRC checksums, and communication
+        retries automatically.
+        """
         #chaino는 I2C1을 사용
         _Wire1 = I2C(1, sda=Pin(2), scl=Pin(3), freq=400000)
 
 
         @staticmethod
         def scan(): #i2c 포트 스캔 함수
+            """
+            Scans the I2C bus for connected Chaino slave devices.
 
+            This method performs an I2C scan, and for each device found, it
+            attempts to communicate to verify if it's a Chaino slave. It prints
+            a list of found and identified Chaino devices.
+
+            .. code-block:: python
+
+                Chaino.scan()
+
+            Example Output::
+
+                I2C1 scan starts ...
+                Chaino_Hana (slave addr:0x42)
+                Chaino_Unknown (slave addr:0x45)
+            """
             print("I2C1 scan starts ... ")
             addr_lst = Chaino._Wire1.scan()
 
@@ -366,6 +558,22 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
 
 
         def ping(self):
+            """
+            Measures the round-trip communication latency to the target device.
+
+            This method sends a simple command (`who()`) over I2C and measures the
+            time it takes to receive a response. The result, in milliseconds, is
+            printed to the console.
+
+            .. code-block:: python
+
+                slave = Chaino(0x42)
+                slave.ping()
+            
+            Example Output::
+
+                ping... elapsed time to execute who() : 5.134 ms
+            """
             print("ping...", end="")
             start = time.ticks_us()   # 시작 시간 (µs)
             self.who()
@@ -376,13 +584,39 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
 
 
         def __init__(self, addr:int):
-            
+            """
+            Initializes a connection to a Chaino slave device over the I2C bus.
+
+            :param i2c_addr: The 7-bit I2C address of the target slave device.
+            :type i2c_addr: int
+
+            .. code-block:: python
+
+                # Connect to a slave device with I2C address 0x42
+                slave_device = Chaino(0x42)
+            """
             super().__init__(addr)
             
         
         
         def exec_func(self, func_num:int, *args):
-            
+            """
+            Executes a function by its ID on the target I2C slave device.
+
+            This is the core low-level method for sending commands. It constructs a
+            Chaino packet and sends it over the I2C bus, handling the response,
+            checksums, and retries.
+
+            :param func_num: The integer ID of the function to execute on the
+                             Arduino device.
+            :type func_num: int
+            :param args: A variable number of arguments to pass to the remote function.
+            :return: The value(s) returned from the remote function. Can be ``None``,
+                     a ``str``, or a ``list[str]``.
+            :rtype: None | str | list[str]
+            :raises Exception: If I2C communication fails or the remote function
+                               reports an error.
+            """            
             addr   = self._addr
             packet = gen_exec_func_packet(-1, func_num, *args)
 
@@ -435,22 +669,6 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
 
 
 if __name__=="__main__":
-    '''''
-    import time
-
-    c = Chaino(0x40)
-    print(c.exec_func(203))
-    for _ in range(100):
-        c.set_neopixel(255,0,0)
-        print(c.exec_func(4,26))
-        time.sleep(0.1)
-        c.set_neopixel(0,255,0)
-        print(c.exec_func(4,26))
-        time.sleep(0.1)
-        c.set_neopixel(0,0,255)
-        print(c.exec_func(4,26))
-        time.sleep(0.1)
-    '''
 
     import sys, os
 

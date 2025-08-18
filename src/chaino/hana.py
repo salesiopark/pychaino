@@ -1,9 +1,58 @@
-if __name__ == "__main__":
-    from chaino import Chaino
-else:
-    from .chaino import Chaino          # CPython 패키지 환경
+"""
+Chaino Hana Board Control Library
+=================================
 
+This module provides a high-level, Pythonic interface for controlling a
+Chaino_Hana board. It abstracts the underlying function calls into
+an intuitive, Arduino-like API.
+
+The primary class, :class:`Hana`, inherits all the base communication features
+from :class:`chaino.Chaino` and adds specific methods for hardware manipulation
+like GPIO, ADC, PWM, and tone generation.
+
+CPython Usage:
+--------------
+.. code-block:: python
+
+    from chaino import Hana
+    import time
+
+    # Connect to a Hana board (master or slave)
+    hana = Hana("COM9", i2c_addr=0x42)
+
+    # Use Arduino-like functions
+    hana.set_pin_mode(13, hana.OUTPUT)
+    hana.write_digital(13, hana.HIGH)
+    
+    pot_value = hana.read_analog(26)
+    print(f"Analog value: {pot_value}")
+
+    hana.start_tone(8, 'c4', 500) # Play a C4 note for 500ms
+
+MicroPython Usage:
+------------------
+.. code-block:: python
+
+    from chaino import Hana
+    import time
+
+    # Connect to a Chaino_Hana slave board on the I2C bus
+    hana = Hana(0x42)
+
+    # Blink the onboard neopixel
+    hana.set_pin_mode(13, hana.OUTPUT)
+    for _ in range(3):
+        hana.set_neopixel(255,255,255)
+        time.sleep(0.5)
+        hana.set_neopixel(0,0,0)
+        time.sleep(0.5)
+"""
 import sys, time
+
+try:
+    from .chaino import Chaino  # when loading package
+except ImportError:
+    from chaino import Chaino   # when executing directly
 
 
 _PITCHES = {
@@ -63,10 +112,9 @@ _NOTES = {
 
 
 class _HanaCommon:
-    """Common constants and methods for controlling Chaino_Hana device.
-    
-    This class defines Arduino-compatible constants and methods that work
-    across different Python implementations (CPython and MicroPython).
+    """
+    A mixin class providing common hardware control methods for a Chaino Hana board.
+    This class is not intended to be instantiated directly.
     """
     HIGH = 1
     LOW = 0
@@ -78,346 +126,214 @@ class _HanaCommon:
 
 
     def set_pin_mode(self, pin: int, mode: int):
-        """Configure the specified pin to behave as an input or output.
-        
-        This method provides the same functionality as Arduino's pinMode() function.
-        
-        Args:
-            pin (int): The pin number to configure (0-40 depending on board)
-            mode (int): The pin mode to set
-                - INPUT (0): Configure as input pin
-                - OUTPUT (1): Configure as output pin
-                - INPUT_PULLUP (2): Configure as input with internal pull-up resistor
-                - INPUT_PULLDOWN (3): Configure as input with internal pull-down resistor
-        
-        Example:
-            >>> from chaino import Hana
-            >>> hana = Hana("COM9")
-            >>> hana.set_pin_mode(13, hana.OUTPUT)     # Set pin 13 as output
-            >>> hana.set_pin_mode(2, hana.INPUT)       # Set pin 2 as input
-            >>> hana.set_pin_mode(3, hana.INPUT_PULLUP) # Set pin 3 as input with pull-up
-        
-        Note:
-            - Pin mode must be set before using the pin for digital I/O operations
-            - Pull-up/pull-down modes eliminate the need for external resistors
-            - Not all pins support all modes (depends on hardware capabilities)
+        """
+        Configures the specified pin to behave either as an input or an output.
+        This is equivalent to Arduino's ``pinMode()``.
+
+        :param pin: The number of the pin whose mode you wish to set.
+        :type pin: int
+        :param mode: The mode for the pin. Can be :attr:`INPUT`, :attr:`OUTPUT`,
+                     :attr:`INPUT_PULLUP`, or :attr:`INPUT_PULLDOWN`.
+        :type mode: int
+
+        .. code-block:: python
+
+            # Set pin 13 as an output for an LED
+            hana.set_pin_mode(13, hana.OUTPUT)
+            
+            # Set pin 2 as an input with a pull-up for a button
+            hana.set_pin_mode(2, hana.INPUT_PULLUP)
         """
         self.exec_func(11, pin, mode)
 
 
     def read_digital(self, pin: int) -> int:
-        """Read the digital value from the specified pin.
+        """
+        Reads the value from a specified digital pin.
+        This is equivalent to Arduino's ``digitalRead()``.
+
+        :param pin: The number of the digital pin you want to read.
+        :type pin: int
+        :return: The state of the pin, either :attr:`HIGH` (1) or :attr:`LOW` (0).
+        :rtype: int
+
+        .. code-block:: python
         
-        This method provides the same functionality as Arduino's digitalRead() function.
-        
-        Args:
-            pin (int): The pin number to read from
-            
-        Returns:
-            int: Digital value (HIGH/1 or LOW/0)
-            
-        Example:
-            >>> # Read button state
-            >>> hana.set_pin_mode(2, Hana.INPUT_PULLUP)
-            >>> button_state = hana.read_digital(2)
-            >>> if button_state == Hana.LOW:
-            ...     print("Button pressed!")
-            
-            >>> # Read sensor output
-            >>> sensor_value = hana.read_digital(7)
-            >>> print(f"Sensor state: {'HIGH' if sensor_value else 'LOW'}")
-        
-        Note:
-            - Pin must be configured as INPUT, INPUT_PULLUP, or INPUT_PULLDOWN first
-            - Returns 1 (HIGH) for voltages above ~2.5V, 0 (LOW) for voltages below ~1.5V
-            - For analog readings, use read_analog() instead
+            button_state = hana.read_digital(2)
+            if button_state == hana.LOW:
+                print("Button is pressed!")
         """
         return int(self.exec_func(12, pin))
     
 
 
     def write_digital(self, pin: int, status: int):
-        """Write a digital value (HIGH or LOW) to the specified pin.
-        
-        This method provides the same functionality as Arduino's digitalWrite() function.
-        
-        Args:
-            pin (int): The pin number to write to
-            status (int): Digital value to write (HIGH/1 or LOW/0)
-            
-        Example:
-            >>> # Control LED
-            >>> hana.set_pin_mode(13, Hana.OUTPUT)
-            >>> hana.write_digital(13, Hana.HIGH)  # Turn LED on
-            >>> time.sleep(1)
-            >>> hana.write_digital(13, Hana.LOW)   # Turn LED off
-            
-            >>> # Control relay
-            >>> hana.set_pin_mode(8, Hana.OUTPUT)
-            >>> hana.write_digital(8, 1)  # Activate relay
-        
-        Note:
-            - Pin must be configured as OUTPUT first using set_pin_mode()
-            - For PWM output, use write_analog() instead
+        """
+        Write a HIGH or a LOW value to a digital pin.
+        This is equivalent to Arduino's ``digitalWrite()``.
+
+        :param pin: The number of the pin to write to.
+        :type pin: int
+        :param status: The value to write, either :attr:`HIGH` or :attr:`LOW`.
+        :type status: int
+
+        .. code-block:: python
+
+            # Turn an LED on
+            hana.write_digital(13, hana.HIGH)
+            time.sleep(1)
+            # Turn the LED off
+            hana.write_digital(13, hana.LOW)
         """
         self.exec_func(13, pin, status)
 
 
 
     def read_analog(self, pin: int) -> int:
-        """Read the analog value from the specified pin.
-        
-        This method provides the same functionality as Arduino's analogRead() function.
-        
-        Args:
-            pin (int): The analog pin number to read from (26,27,28,29 for RP2040)
-            
-        Returns:
-            int: Analog value (0-1023 for 10-bit ADC, 0-4095 for 12-bit ADC)
-            
-        Example:
-            >>> # Read potentiometer value
-            >>> pot_value = hana.read_analog(0)  # Read from A0
-            >>> voltage = (pot_value / 1023.0) * 3.3  # Convert to voltage
-            >>> print(f"Potentiometer: {pot_value} ({voltage:.2f}V)")
-            
-            >>> # Read temperature sensor
-            >>> temp_raw = hana.read_analog(1)
-            >>> # Convert based on sensor specifications
-            >>> temperature = (temp_raw * 3.3 / 1023.0 - 0.5) * 100
-            >>> print(f"Temperature: {temperature:.1f}°C")
-        
-        Note:
-            - No need to set pin mode for analog pins
-            - Resolution depends on the ADC resolution (10-bit = 0-1023, 12-bit = 0-4095)
-            - Input voltage range is typically 0V to VCC (3.3V or 5V)
-            - For setting resolution, use set_adc_resolution() method
+        """
+        Reads the value from the specified analog pin.
+        This is equivalent to Arduino's ``analogRead()``.
+
+        :param pin: The number of the analog input pin to read from (e.g., 26~29 on RP2040).
+        :type pin: int
+        :return: The analog reading on the pin. The range depends on the ADC
+                 resolution (e.g., 0-1023 for 10-bit, 0-4095 for 12-bit).
+        :rtype: int
+        :seealso: :meth:`set_adc_bits` to change the reading resolution.
         """
         return int(self.exec_func(14, pin))
     
 
     def set_adc_bits(self, bits: int):
-        """Set the ADC resolution for analog readings.
-        
-        This method allows changing the resolution of analog readings.
-        Supported resolutions are 10-bit (default) and 12-bit.
-        
-        Args:
-        bits (int): Resolution in bits (8, 10, 12, etc.)
-                   - 8 bits resolution : range 0~255
-                   - 10 bits resolution : range 0~1023 (default for RP2040)
-                   - 12 bits resolution : range 0~4095 (maximum for RP2040)
-        
-        Example:
-            >>> hana.set_adc_bits(12)  # Set to 12-bit resolution
-            >>> value = hana.read_analog(26)  # Now returns 0-4095
-            
-            >>> hana.set_adc_bits(10)  # Set back to 10-bit resolution
-            >>> value = hana.read_analog(27)  # Returns 0-1023
-        
-        Note:
-            - Default resolution is usually 10-bit, change only if needed
-            - Affects all subsequent read_analog() calls
+        """
+        Sets the resolution for :meth:`read_analog`.
+        This is equivalent to ``analogReadResolution()`` on supported boards.
+
+        :param bits: The desired resolution in bits. Common values are 10 (for a
+                     range of 0-1023) or 12 (for a range of 0-4095).
+        :type bits: int
+
+        .. code-block:: python
+
+            # Set ADC to 12-bit resolution for more precision
+            hana.set_adc_bits(12)
+            high_res_value = hana.read_analog(26) # Returns a value between 0 and 4095
         """
         self.exec_func(15, bits)
 
 
 
     def write_analog(self, pin: int, duty: int):
-        """Output PWM signal with specified duty cycle.
+        """
+        Writes an analog value (PWM wave) to a pin.
+        This is equivalent to Arduino's ``analogWrite()``.
+
+        :param pin: The pin to write to.
+        :type pin: int
+        :param duty: The duty cycle for the PWM signal. The value should be between
+                     0 (always off) and the maximum range (default is 255).
+        :type duty: int
+        :seealso: :meth:`set_pwm_freq`, :meth:`set_pwm_range`
         
-        Outputs a PWM (Pulse Width Modulation) signal on the specified pin
-        with the given duty cycle value.
-        
-        Args:
-            pin (int): GPIO pin number (0-28 for RP2040)
-            duty (int): PWM duty cycle value
-                Range: 0 to current PWM range (default 0-255)
-                * 0 = 0% duty cycle (always LOW)
-                * pwm_range/2 = 50% duty cycle  
-                * pwm_range = 100% duty cycle (always HIGH)
-        
-        Returns:
-            None
-        
-        Note:
-            - Default frequency: 1000Hz (1kHz)
-            - Default range: 0-255 (8-bit)
-            - Use set_pwm_freq() to change frequency
-            - Use set_pwm_range() to change duty cycle range
-            - All GPIO pins on RP2040 support PWM
-        
-        Example:
-            >>> # Basic PWM output (default 1kHz, 0-255 range)
-            >>> self.write_analog(25, 128)  # 50% duty cycle on built-in LED
-            
-            >>> # With custom frequency and range
-            >>> self.set_pwm_freq(15, 2000)    # 2kHz frequency
-            >>> self.set_pwm_range(15, 1023)   # 10-bit resolution
-            >>> self.write_analog(15, 256)     # 25% duty cycle
+        .. code-block:: python
+
+            # Fade an LED to half brightness
+            hana.write_analog(9, 128)
         """
         self.exec_func(21, pin, duty)
 
 
 
     def set_pwm_freq(self, pin:int, freq:int):
-        """Set PWM frequency for specified pin.
-    
-        Sets the PWM frequency for the specified pin. This affects all PWM pins
-        on the same PWM slice in RP2040.
+        """
+        Sets the frequency for PWM signals generated by :meth:`write_analog`.
+        This is equivalent to ``analogWriteFreq()`` on supported boards.
+
+        :param freq: The desired frequency in Hertz (Hz).
+        :type freq: int
         
-        Args:
-            pin (int): GPIO pin number (0-28 for RP2040)
-            freq (int): PWM frequency in Hz (typically 100Hz - 40kHz)
-                Default frequency is 1000Hz (1kHz)
+        .. code-block:: python
         
-        Returns:
-            None
-        
-        Note:
-            - RP2040 has 8 PWM slices, each controlling 2 pins
-            - Pins on the same slice share the same frequency
-            - Higher frequencies reduce PWM resolution
-            - Recommended frequencies:
-                * LEDs: 1kHz - 5kHz
-                * Motors: 20kHz+  
-                * Servos: 50Hz
-        
-        Example:
-            >>> # Set PWM frequency to 2kHz for pin 15
-            >>> self.set_pwm_freq(15, 2000)
-            >>> # Set servo frequency (50Hz) for pin 14  
-            >>> self.set_pwm_freq(14, 50)
+            # Set PWM frequency to 1 kHz for smoother LED fading
+            hana.set_pwm_freq(1000)
         """
         self.exec_func(22, pin, freq)
 
 
 
     def set_pwm_range(self, pwm_range:int):
-        """Set PWM duty cycle range for specified pin.
+        """
+        Sets the range for the duty cycle used in :meth:`write_analog`.
+        This is equivalent to ``analogWriteRange()`` on supported boards.
+
+        :param pwm_range: The maximum value for the duty cycle, which defines the
+                          PWM resolution (e.g., 255 for 8-bit, 1023 for 10-bit).
+        :type pwm_range: int
         
-        Sets the maximum value for PWM duty cycle on the specified pin.
-        This determines the resolution of PWM control.
-        
-        Args:
-            pin (int): GPIO pin number (0-28 for RP2040)
-            pwm_range (int): Maximum duty cycle value
-                Common ranges:
-                * 255 (8-bit, default)
-                * 1023 (10-bit)  
-                * 4095 (12-bit)
-                * 65535 (16-bit)
-        
-        Returns:
-            None
-        
-        Note:
-            - Default range is 255 (8-bit resolution)
-            - Higher ranges provide finer control but may reduce max frequency
-            - Range applies to analogWrite() duty cycle values
-            - 0 = 0% duty cycle, pwm_range = 100% duty cycle
-        
-        Example:
-            >>> # Set 10-bit resolution (0-1023)
-            >>> self.set_pwm_range(15, 1023)
-            >>> # Now use analogWrite with 0-1023 range
-            >>> self.write_analog(15, 512)  # 50% duty cycle
-            
-            >>> # Set 12-bit resolution (0-4095)  
-            >>> self.set_pwm_range(16, 4095)
-            >>> self.write_analog(16, 2048)  # 50% duty cycle
+        .. code-block:: python
+
+            # Set PWM range for 10-bit resolution
+            hana.set_pwm_range(1023)
+            # Now set LED to 50% brightness with the new range
+            hana.write_analog(9, 512)
         """
         self.exec_func(23, pwm_range)
 
 
 
-
-
-
-
     def get_millis(self) -> int: #"""현재 밀리초 단위 시간 반환"""
-        """Return the current time in milliseconds since program start.
-        
-        This method provides the same functionality as Arduino's millis() function.
-        
-        Returns:
-            int: Current time in milliseconds
-            
-        Example:
-            >>> # Measure execution time
-            >>> start_time = hana.get_millis()
-            >>> # ... do some work ...
-            >>> execution_time = hana.get_millis() - start_time
-            >>> print(f"Execution took {execution_time}ms")
-            
-            >>> # Non-blocking delay
-            >>> previous_time = hana.get_millis()
-            >>> while True:
-            ...     current_time = hana.get_millis()
-            ...     if current_time - previous_time >= 1000:
-            ...         print("1 second passed")
-            ...         previous_time = current_time
-        
-        Note:
-            - Counter starts at 0 when Chaino_Hana device is powerd in or resetted.
-            - Overflows approximately every 50 days (returns to 0)
-            - Resolution is 1 millisecond
-            - For microsecond precision, use micros() instead
+        """
+        Returns the number of milliseconds passed since the board began running.
+        This is equivalent to Arduino's ``millis()``.
+
+        :return: The number of milliseconds as an integer.
+        :rtype: int
+        :note: This number will overflow (go back to zero) after approximately 50 days.
         """
         return int(self.exec_func(31))
     
 
-    
+    '''
     def get_micros(self) -> int:
-        """Return the current time in microseconds since program start.
-        
-        This method provides the same functionality as Arduino's micros() function.
-        
-        Returns:
-            int: Current time in microseconds
-            
-        Example:
-            >>> # Measure precise timing
-            >>> start_time = hana.get_micros()
-            >>> # ... do quick operation ...
-            >>> execution_time = hana.get_micros() - start_time
-            >>> print(f"Operation took {execution_time}µs")
-            
-            >>> # Generate precise delays
-            >>> start = hana.get_micros()
-            >>> while hana.get_micros() - start < 1000:  # Wait 1ms
-            ...     pass  # Busy wait
-        
-        Note:
-            - Counter starts at 0 when program begins
-            - Overflows approximately every 70 minutes (returns to 0)
-            - Resolution is 1 microsecond
-            - For millisecond timing, use millis() instead
-            - More precise but also more CPU intensive than millis()
+        """
+        Returns the number of microseconds passed since the board began running.
+        This is equivalent to Arduino's ``micros()``.
+
+        :return: The number of microseconds as an integer.
+        :rtype: int
+        :note: This number will overflow (go back to zero) after approximately 70 minutes.
         """
         return int(self.exec_func(32))
-    
+    '''
 
 
     # 음 발생 관련 함수들
     def start_tone(self, pin: int, freq, duration: int = 0):
-        """Generate a tone of specified frequency on a digital pin.
-        
-        This method provides the functionality of Arduino's tone() function,
-        supporting both numeric frequencies and string note names.
-        
-        Args:
-            pin (int): The pin number to output the tone
-            freq (int or str): Frequency in Hz or note name
-                - int: Direct frequency specification (e.g., 440)
-                - str: Note name specification (e.g., 'c4', 'a#5', 'do')
-            duration (int, optional): Tone duration in milliseconds. 
-                Default 0 means infinite duration.
-        
-        Raises:
-            ValueError: When an unknown note name is provided
+        """
+        Generates a square wave tone on a pin.
+        This is equivalent to Arduino's ``tone()``.
+
+        :param pin: The pin on which to generate the tone.
+        :type pin: int
+        :param freq: The frequency of the tone in Hertz, or a string representing a
+                     musical note (e.g., 'c4', 'a#5', 'db3').
+        :type freq: int | str
+        :param duration: The duration of the tone in milliseconds. If 0 (default),
+                         the tone plays continuously until :meth:`stop_tone` is called.
+        :type duration: int
+        :raises ValueError: If an unrecognized note string is provided.
+
+        .. code-block:: python
+
+            # Play a 440 Hz 'A' note for 1 second
+            hana.start_tone(8, 440, 1000)
+
+            # Play a 'C4' note continuously
+            hana.start_tone(8, 'c4')
+            time.sleep(2)
+            hana.stop_tone(8)
             
-        Example:
+        .. code-block:: python
             >>> # Direct frequency specification
             >>> from chaino import Hana
             >>> import time
@@ -435,11 +351,7 @@ class _HanaCommon:
             ...     hana.start_tone(8, note, 400)
             ...     time.sleep(0.5)
         
-        Note:
-            - Supported note names: 'c0'~'c8', sharps('#'), flats('b'), solfege('do'~'si')
-            - Case insensitive
-            - Duration of 0 plays until no_tone() is called
-            - Only one pin can generate tone at a time
+        :note: Case insensitive
         """
         if isinstance(freq, str):
             freq_lower = freq.lower()
@@ -452,15 +364,14 @@ class _HanaCommon:
 
 
     def stop_tone(self, pin: int):
-        """Stop tone generation on the specified pin.
+        """
+        Stops the tone being generated on a pin.
+        This is equivalent to Arduino's ``noTone()``.
+
+        :param pin: The pin on which to stop the tone.
+        :type pin: int
         
-        This method provides the same functionality as Arduino's noTone() function,
-        immediately stopping tone generation started by the tone() method.
-        
-        Args:
-            pin (int): The pin number to stop tone generation
-            
-        Example:
+        .. code-block:: python
             >>> # Start tone
             >>> hana.start_tone(8, 'a4')  # Play A4 note on pin 8 infinitely
             >>> 
@@ -476,13 +387,11 @@ class _HanaCommon:
             >>> time.sleep(1.5)           # 1.5 second silence
             >>> hana.start_tone(8, 'd4', 500)   # Re note for 0.5 seconds
         
-        Note:
-            - Only needed when tone() method's duration parameter is 0.
-            - When duration is specified, tone stops automatically, no_tone() is unnecessary.
-            - Calling no_tone() on an already stopped pin is harmless and no effect.
+        :note:
+            - Only needed when start_tone() method's duration parameter is 0.
+            - When duration is specified, tone stops automatically, stop_tone() is unnecessary.
         """
         self.exec_func(42, pin)
-
 
 
 
@@ -492,14 +401,33 @@ IS_CPYTHON = (sys.implementation.name == "cpython")
 if IS_CPYTHON:
     
     class Hana(_HanaCommon, Chaino):
-        """CPython: Chaino(port, i2c_addr=0) 시그니처 가정"""
+        """
+        A high-level interface for controlling a Chaino_Hana board from CPython.
+
+        This class combines the serial communication capabilities of :class:`~chaino.Chaino`
+        with the Arduino-like hardware control methods specific to the Chaino_Hana board.
+
+        :param port: The name of the serial port (e.g., "COM9").
+        :type port: str
+        :param i2c_addr: The I2C address of the target Chaino_Hana board. If 0 (default),
+                         commands are sent to the master device connected via serial.
+        :type i2c_addr: int
+        """
         def __init__(self, port, i2c_addr: int = 0):
             Chaino.__init__(self, port, i2c_addr)
             
 else:
     
     class Hana(_HanaCommon, Chaino):
-        """MicroPython: Chaino(slave_addr:int) 시그니처 가정"""
+        """
+        A high-level interface for controlling a Chaino Hana board from MicroPython.
+
+        This class combines the I2C communication capabilities of :class:`~chaino.Chaino`
+        with the Arduino-like hardware control methods specific to the Chaino_Hana board.
+
+        :param i2c_addr: The I2C address of the target Chaino_Hana slave board.
+        :type i2c_addr: int
+        """
         def __init__(self, i2c_addr: int):
             # MicroPython용 Chaino는 (slave_addr)만 받는다고 가정
             Chaino.__init__(self, i2c_addr)
