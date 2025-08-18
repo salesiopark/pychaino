@@ -5,6 +5,8 @@
 #2025/08/13 : Cpython과 micropython에서 동시에 사용되는 함수들 분리
 
 import sys
+import time # micropython에도 time모듈이 있다.
+
 IS_CPYTHON = (sys.implementation.name == "cpython")
 
 # 구분자들
@@ -144,21 +146,29 @@ class _ChainoBase:
         
     
     # 공통 인터페이스 메소드들
+    def who(self) -> str:
+        return self.exec_func(201)
+    
+    
+    def get_version(self) -> str:
+        return self.exec_func(202)
+    
+    
+    def get_addr(self) -> str:
+        int_addr = int(self.exec_func(203))
+        return f"0x{int_addr:2x}"
+    
+    
     def set_addr(self, new_addr: int):
-        """201번 함수 - I2C 주소 설정"""
         if self._addr != new_addr:
-            return self.exec_func(201, new_addr)
+            return self.exec_func(204, new_addr)
         else:
             return f"I2C address is already set to 0x{self._addr:02x}."
     
     def set_neopixel(self, r: int, g: int, b: int):
-        self.exec_func(202, r, g, b)
-    
-    def who(self) -> str:
-        return self.exec_func(203)
+        self.exec_func(205, r, g, b)
 
-    def get_addr(self) -> int:
-        return int(self.exec_func(204))
+
 
 ########################################################################
 # 플랫폼별 구현
@@ -191,6 +201,15 @@ if IS_CPYTHON:#===========================================
                     #print(str(e))
                     print(f'Serial("{s[0]}"): Not a Chaino (master) device')
             print("Note: Chaino.scan() can detect \033[31m**MASTER**\033[0m Chaino devices only.")
+
+
+        def ping(self):
+            print("ping...", end="")
+            start_time = time.time()   # 시작 시간 기록
+            self.who()
+            end_time = time.time()     # 종료 시간 기록
+            elapsed_time = end_time - start_time
+            print(f" elapsed time to execute who() : {elapsed_time*1000:.3f} ms")
 
 
         def __init__(self, port:str, i2c_addr: int=0):
@@ -318,9 +337,10 @@ if IS_CPYTHON:#===========================================
                 return self._parse_response(packet_ret[2:])  # 응답 패킷 파싱 후 반환
 
 
-
+##################################################################
 else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=============================
-
+###################################################################
+    
     from machine import Pin, I2C
     
     
@@ -342,6 +362,17 @@ else: # micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=======
                     print_yellow(f"{c.who()} (slave addr:0x{addr:02x})")
             else:
                 print_err("No slave devices found.")
+
+
+
+        def ping(self):
+            print("ping...", end="")
+            start = time.ticks_us()   # 시작 시간 (µs)
+            self.who()
+            end = time.ticks_us()     # 종료 시간 (µs)
+            elapsed = time.ticks_diff(end, start)  # 실행 시간 계산
+            print(f" elapsed time to execute who() : {elapsed/1000:.3f} ms")
+
 
 
         def __init__(self, addr:int):
