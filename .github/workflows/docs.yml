@@ -38,7 +38,7 @@ jobs:
     - name: Build documentation
       run: |
         cd docs
-        sphinx-apidoc -o . ../your_package --force
+        sphinx-apidoc -o . ../src/chaino --force
         make html
         
     - name: Upload artifact
