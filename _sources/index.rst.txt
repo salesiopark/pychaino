@@ -1,0 +1,50 @@
+Welcome to chaino documentation!
+===================================
+
+**chaino** is a Python and MicroPython Host Library for controlling Chaino (Arduino) Devices.
+
+.. toctree::
+   :maxdepth: 2
+   :caption: API Documentation:
+
+   modules
+
+Quick Start
+===========
+
+**CPython Example:**
+
+.. code-block:: python
+
+   from chaino import Chaino, Hana
+
+   # Generate Chaino object via Serial
+   dev = Chaino("COM3")  
+   print(dev.who())
+
+   # Generate Hana object and call analogRead(26) function
+   dev2 = Hana("COM3", 0x40)
+   adc = dev2.read_analog(26)
+   print(adc)
+
+**MicroPython Example:**
+
+.. code-block:: python
+
+   from chaino import Chaino, Hana
+
+   # Generate Chaino object via I2C
+   dev = Chaino(0x40)  
+   print(dev.who())
+
+   # Generate Hana object
+   dev2 = Hana(0x41)
+   adc = dev2.read_analog(26)
+   print(adc)
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`

@@ -1,0 +1,826 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>chaino.chaino &mdash; chaino  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            chaino
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">chaino</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">chaino</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">chaino.chaino</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for chaino.chaino</h1><div class="highlight"><pre>
+<span></span><span class="c1">#2025/07/15 : 최초 버전 작성</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Chaino Protocol Client Library</span>
+<span class="sd">==============================</span>
+
+<span class="sd">This module provides the Python client-side implementation for the Chaino protocol,</span>
+<span class="sd">allowing communication with Chaino-enabled Arduino devices. It supports both standard</span>
+<span class="sd">CPython (via Serial/pyserial) and MicroPython (via I2C).</span>
+
+<span class="sd">The primary entry point is the :class:`Chaino` class, which abstracts the low-level</span>
+<span class="sd">details of packet creation, CRC checking, and communication.</span>
+
+<span class="sd">CPython (Serial) Usage:</span>
+<span class="sd">-----------------------</span>
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    from chaino import Chaino</span>
+
+<span class="sd">    # Connect to the master device on COM9</span>
+<span class="sd">    master = Chaino(&quot;COM9&quot;)</span>
+<span class="sd">    print(master.who())</span>
+
+<span class="sd">    # Connect to a slave device at I2C address 0x42 via the master on COM9</span>
+<span class="sd">    slave = Chaino(&quot;COM9&quot;, i2c_addr=0x42)</span>
+<span class="sd">    slave.set_neopixel(255, 0, 0) # Set slave&#39;s LED to red</span>
+
+<span class="sd">MicroPython (I2C) Usage:</span>
+<span class="sd">------------------------</span>
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    from chaino import Chaino</span>
+
+<span class="sd">    # Scan for connected slave devices on the I2C bus</span>
+<span class="sd">    Chaino.scan()</span>
+
+<span class="sd">    # Connect to a slave device at I2C address 0x42</span>
+<span class="sd">    slave = Chaino(0x42)</span>
+<span class="sd">    print(slave.who())</span>
+<span class="sd">    slave.set_neopixel(0, 255, 0) # Set slave&#39;s LED to green</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span> <span class="c1"># micropython에도 time모듈이 있다.</span>
+
+<span class="n">IS_CPYTHON</span> <span class="o">=</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">implementation</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;cpython&quot;</span><span class="p">)</span>
+
+<span class="c1"># 구분자들</span>
+<span class="n">RS</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x1e</span><span class="s2">&quot;</span>  <span class="c1">#코드 주석에서 {RS}로 표시</span>
+<span class="n">EOT</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\x04</span><span class="s2">&quot;</span> <span class="c1">#코드 주석에서 {EOT}로 표시</span>
+<span class="n">bRS</span><span class="p">,</span> <span class="n">bEOT</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x1e</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x04</span><span class="s1">&#39;</span>
+
+<span class="n">PACKET_RQ_RESEND</span> <span class="o">=</span> <span class="p">(</span><span class="mh">0x1861</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;E&#39;</span>
+
+
+<span class="c1">#######################################################################</span>
+<span class="c1"># python 종류별로 crc_hqx 함수를 정의한다.</span>
+<span class="c1">#######################################################################</span>
+<span class="k">if</span> <span class="n">IS_CPYTHON</span><span class="p">:</span>
+    
+    <span class="kn">from</span><span class="w"> </span><span class="nn">binascii</span><span class="w"> </span><span class="kn">import</span> <span class="n">crc_hqx</span> <span class="c1"># CPython 에서만 존재</span>
+    
+<span class="k">else</span><span class="p">:</span> <span class="c1"># Micropython에서는 binascii라이브러리에 crc_hqx가 없으므로 직접 구현</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">crc_hqx</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">crc</span> <span class="o">=</span> <span class="n">value</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">crc</span> <span class="o">^=</span> <span class="p">(</span><span class="n">b</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">crc</span> <span class="o">&amp;</span> <span class="mh">0x8000</span><span class="p">:</span>
+                    <span class="n">crc</span> <span class="o">=</span> <span class="p">((</span><span class="n">crc</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">^</span> <span class="mh">0x1021</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">crc</span> <span class="o">=</span> <span class="p">(</span><span class="n">crc</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+        <span class="k">return</span> <span class="n">crc</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># 공통 유틸리티 함수들</span>
+<span class="c1">########################################################################</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">**CRC-16-XMODEM (초기값 0x0000)**은 매우 널리 알려진 표준이다.</span>
+<span class="sd">파이썬의 crc_hqx(data, 0x0000)는 이 표준과 정확히 일치하며,</span>
+<span class="sd">C/C++로 구현된 코드도 쉽게 찾을 수 있고 검증도 용이하다.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="gen_CRC16_XMODEM">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.gen_CRC16_XMODEM">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_CRC16_XMODEM</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">crc_hqx</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span></div>
+
+
+
+<span class="c1">#진리값만 &quot;1&quot;/&quot;0&quot;으로 만들고 나머지는 그대로 str로 변환</span>
+<div class="viewcode-block" id="map_args">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.map_args">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">map_args</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;1&quot;</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="s2">&quot;0&quot;</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>        </div>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">패킷 구조: [crc:2byte]payload (끝에 {EOT}는 없다)</span>
+<span class="sd">따라서 첫 두 바이트(crc16)를 분리하고 나머지로 crc를 계산하여 비교</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="is_crc_matched">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.is_crc_matched">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_crc_matched</span><span class="p">(</span><span class="n">packet</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span> <span class="k">return</span> <span class="kc">False</span> <span class="c1">#적어도 crc16+header 3바이트는 되어야 함</span>
+    <span class="n">received_crc</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="n">computed_crc</span> <span class="o">=</span> <span class="n">crc_hqx</span><span class="p">(</span><span class="n">packet</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1">#print(f&quot;received CRC:0x{hex(received_crc)}, computed CRC:0x{hex(computed_crc)}&quot;)</span>
+    <span class="k">return</span> <span class="n">received_crc</span> <span class="o">==</span> <span class="n">computed_crc</span></div>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">RP2040의 함수실행 요구 패킷 생성. 첫 2byts이후는 ASCII문자열. [...]은 option</span>
+<span class="sd">패킷 구조 : [crc:2byte]&#39;R&#39;{RS}AD{RS}FN [ {RS}arg1{RS}arg2{RS} ... {RS}argn ] {EOT}</span>
+<span class="sd">첫 글자가 &#39;R&#39;이라면 함수 실행을 의미하며 위의 구조를 가진다</span>
+<span class="sd">    AD (i2c_addr) : 두 자리(고정) 16진수</span>
+<span class="sd">    FN (func_num) : 한 자리(혹은 두 자리) 16진수 - 아두이노에서 최대 200개까지 등록</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="gen_exec_func_packet">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.gen_exec_func_packet">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_exec_func_packet</span><span class="p">(</span><span class="n">i2c_addr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">func_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="c1"># 1) map_args에서 True는 &quot;1&quot;로 False는 &quot;0&quot;으로 교체한 후 패킷 생성</span>
+    <span class="k">if</span> <span class="n">i2c_addr</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>  <span class="c1"># micropython에서 호출한 경우</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func_num</span><span class="si">:</span><span class="s2">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>               <span class="c1"># cpython에서 호출한 경우</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i2c_addr</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">func_num</span><span class="si">:</span><span class="s2">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+    <span class="n">parts</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">map_args</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">)</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="n">RS</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span>
+    <span class="n">bytes_crc</span> <span class="o">=</span> <span class="n">gen_CRC16_XMODEM</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+    <span class="n">packet</span> <span class="o">=</span> <span class="n">bytes_crc</span> <span class="o">+</span> <span class="n">payload</span>
+    <span class="c1">#print_packet(packet,&quot;packet sent:&quot;)</span>
+    <span class="k">return</span> <span class="n">packet</span></div>
+
+
+
+<div class="viewcode-block" id="str_packet">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.str_packet">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">str_packet</span><span class="p">(</span><span class="n">packet</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+    <span class="n">str_crc16</span><span class="p">,</span> <span class="n">bytes_data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&lt;[0x</span><span class="si">{</span><span class="n">packet</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">packet</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">replaced</span> <span class="o">=</span> <span class="n">bytes_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">bRS</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">{RS}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">bEOT</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">{EOT}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">str_crc16</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">replaced</span><span class="p">)[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&gt;:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="print_err">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.print_err">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_err</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span> <span class="c1">#RED text</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31mError : &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="print_err2">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.print_err2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_err2</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span> <span class="c1">#BLUE text</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[34mError : &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="print_red">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.print_red">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_red</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span> <span class="c1">#RED text</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m&quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="print_yellow">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.print_yellow">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_yellow</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span> <span class="c1">#BLUE text</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[33m&quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
+
+
+<span class="c1">########################################################################</span>
+<span class="c1"># 공통 베이스 클래스</span>
+<span class="c1">########################################################################</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ChainoBase</span><span class="p">:</span>
+    
+    <span class="n">_MAX_RETRIES</span> <span class="o">=</span> <span class="mi">3</span>
+    
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_addr</span> <span class="o">=</span> <span class="n">addr</span> <span class="c1">#이 주소는 exec_func_packet을 만드는데 사용됨</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_rd_crc_err</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_wrt_crc_err</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_packet</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;응답 패킷 파싱 - CPython/MicroPython 공통 로직&quot;&quot;&quot;</span>
+        <span class="n">char0</span> <span class="o">=</span> <span class="nb">chr</span><span class="p">(</span><span class="n">data_packet</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        
+        <span class="k">if</span> <span class="n">char0</span> <span class="o">==</span> <span class="s1">&#39;S&#39;</span><span class="p">:</span>  <span class="c1"># 함수실행 성공: S{RS}args</span>
+            <span class="n">ret_vals</span> <span class="o">=</span> <span class="n">data_packet</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">bRS</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ret_vals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ret_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="p">:</span> 
+                    <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># 반환값이 없는 경우</span>
+                <span class="k">else</span><span class="p">:</span> 
+                    <span class="k">return</span> <span class="n">ret_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>  <span class="c1"># 반환값이 하나인 경우</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ret_vals</span><span class="p">]</span>  <span class="c1"># 리스트로 반환</span>
+                
+        <span class="k">elif</span> <span class="n">char0</span> <span class="o">==</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span>  <span class="c1"># 함수실행 실패: F{RS}err_msg</span>
+            <span class="n">err_msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_packet</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Function execution fail(addr:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_addr</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">err_msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown response header(addr:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_addr</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">char0</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+    
+    <span class="c1"># 공통 인터페이스 메소드들</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">who</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the identification string of the target device.</span>
+
+<span class="sd">        The string is the device name that is set in the Arduino firmware</span>
+<span class="sd">        which starts as &quot;Chaino_&quot;.</span>
+
+<span class="sd">        :return: The identification string, e.g., &quot;Chaino_Hana&quot;, &quot;Chaino_Unknown&quot;.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">201</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the firmware version string of the target device.</span>
+
+<span class="sd">        :return: The firmware version string, e.g., &quot;Chaino_Hana Firmware v0.9.4&quot;.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">202</span><span class="p">)</span>
+    
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the currently configured I2C address of the target device.</span>
+
+<span class="sd">        :return: The I2C address as a hexadecimal string, e.g., &quot;0x40&quot;.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">int_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">203</span><span class="p">))</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;0x</span><span class="si">{</span><span class="n">int_addr</span><span class="si">:</span><span class="s2">2x</span><span class="si">}</span><span class="s2">&quot;</span>
+    
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_addr</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the I2C address of the target device.</span>
+
+<span class="sd">        This change is written to the device&#39;s EEPROM, making it persistent</span>
+<span class="sd">        across power cycles. **A device reset is required for the new address</span>
+<span class="sd">        to take effect.**</span>
+
+<span class="sd">        :param new_addr: The new 7-bit I2C address to set (e.g., 0x45).</span>
+<span class="sd">        :type new_addr: int</span>
+<span class="sd">        :return: A status message from the device indicating the result.</span>
+<span class="sd">        :rtype: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addr</span> <span class="o">!=</span> <span class="n">new_addr</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">204</span><span class="p">,</span> <span class="n">new_addr</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;I2C address is already set to 0x</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_addr</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">.&quot;</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_neopixel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the color of the onboard NeoPixel LED on the target device.</span>
+
+<span class="sd">        :param r: The red component of the color (0-255).</span>
+<span class="sd">        :type r: int</span>
+<span class="sd">        :param g: The green component of the color (0-255).</span>
+<span class="sd">        :type g: int</span>
+<span class="sd">        :param b: The blue component of the color (0-255).</span>
+<span class="sd">        :type b: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">205</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+
+
+<span class="c1">########################################################################</span>
+<span class="c1"># 플랫폼별 구현</span>
+<span class="c1">########################################################################</span>
+
+<span class="k">if</span> <span class="n">IS_CPYTHON</span><span class="p">:</span><span class="c1">#===========================================</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">serial</span> <span class="c1"># pyserial을 pip install해야 한다</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">serial.tools.list_ports</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">random</span><span class="w"> </span><span class="kn">import</span> <span class="n">randint</span>
+
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">Chaino</span> <span class="p">(</span><span class="n">_ChainoBase</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The primary client class for communicating with a Chaino-enabled device from CPython.</span>
+
+<span class="sd">        This class handles serial communication with a Chaino master device. It can send</span>
+<span class="sd">        commands to the master itself or relay them to a specific I2C slave device</span>
+<span class="sd">        connected to the master. It manages packet formatting, CRC checksums, and</span>
+<span class="sd">        communication retries automatically.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        
+        <span class="n">_SERIAL_TIMEOUT</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#serial timeout</span>
+        <span class="n">_serials</span> <span class="o">=</span> <span class="p">{}</span> 
+
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">scan</span><span class="p">():</span> <span class="c1">#serial 포트 스캔 함수</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Scans available serial ports for connected Chaino master devices.</span>
+
+<span class="sd">            This method iterates through all detected serial ports, attempts to</span>
+<span class="sd">            connect, and verifies if each is a Chaino master by sending a handshake</span>
+<span class="sd">            command. It prints a list of found Chaino devices and other ports.</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                Chaino.scan()</span>
+<span class="sd">            </span>
+<span class="sd">            Example Output::</span>
+
+<span class="sd">                Serial(&quot;COM9&quot;): Chaino_Hana (I2C addr.:0x40)</span>
+<span class="sd">                Serial(&quot;COM3&quot;): Not a Chaino (master) device</span>
+<span class="sd">                Note: Chaino.scan() can detect **MASTER** Chaino devices only.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">ports</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">list_ports</span><span class="o">.</span><span class="n">comports</span><span class="p">()</span>
+            <span class="n">port_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">port</span><span class="o">.</span><span class="n">device</span><span class="p">,</span> <span class="n">port</span><span class="o">.</span><span class="n">description</span><span class="p">)</span> <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">ports</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">port_list</span><span class="p">:</span> <span class="c1">#print(f&quot;&#39;{e[0]}&#39; : {e[1]}&quot;)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">test_obj</span> <span class="o">=</span> <span class="n">Chaino</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#첫번째 포트로 테스트 객체 생성</span>
+                    <span class="c1"># 예외가 발생하지 않았다면 &quot;ImChn&quot; 까지 확인된 것임</span>
+                    <span class="c1">#print_yellow(f&#39;Serial(&quot;{s[0]}&quot;): {test_obj._chaino_name}&#39;)</span>
+                    <span class="n">print_yellow</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Serial(&quot;</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;): </span><span class="si">{</span><span class="n">test_obj</span><span class="o">.</span><span class="n">_chaino_name</span><span class="si">}</span><span class="s1">(0x</span><span class="si">{</span><span class="n">test_obj</span><span class="o">.</span><span class="n">_my_slave_addr</span><span class="si">:</span><span class="s1">02x</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="c1">#print(str(e))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Serial(&quot;</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;): Not a Chaino (master) device&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Note: Chaino.scan() can detect </span><span class="se">\033</span><span class="s2">[31m**MASTER**</span><span class="se">\033</span><span class="s2">[0m Chaino devices only.&quot;</span><span class="p">)</span>
+
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">ping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Measures the round-trip communication latency to the target device.</span>
+
+<span class="sd">            This method sends a simple command (`who()`) and measures the time it</span>
+<span class="sd">            takes to receive a response. The result, in milliseconds, is printed</span>
+<span class="sd">            to the console. This is useful for checking connection health and speed.</span>
+
+<span class="sd">            .. code-block:: python</span>
+<span class="sd">            </span>
+<span class="sd">                device = Chaino(&quot;COM9&quot;)</span>
+<span class="sd">                device.ping()</span>
+
+<span class="sd">            Example Output::</span>
+
+<span class="sd">                ping... elapsed time to execute who() : 0.934 ms</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ping...&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>   <span class="c1"># 시작 시간 기록</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">who</span><span class="p">()</span>
+            <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>     <span class="c1"># 종료 시간 기록</span>
+            <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; elapsed time to execute who() : </span><span class="si">{</span><span class="n">elapsed_time</span><span class="o">*</span><span class="mi">1000</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span>
+
+
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span><span class="nb">str</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Initializes a connection to a Chaino device over a serial port.</span>
+
+<span class="sd">            If a connection for the given port does not already exist, it will be</span>
+<span class="sd">            created and verified. If it exists, the existing connection is reused.</span>
+
+<span class="sd">            :param port: The name of the serial port (e.g., &quot;COM9&quot; on Windows,</span>
+<span class="sd">                         &quot;/dev/ttyACM0&quot; on Linux).</span>
+<span class="sd">            :type port: str</span>
+<span class="sd">            :param i2c_addr: The 7-bit I2C address of the target slave device.</span>
+<span class="sd">                             If 0 (default), commands are sent to the master</span>
+<span class="sd">                             device connected via serial.</span>
+<span class="sd">            :type i2c_addr: int</span>
+<span class="sd">            :raises Exception: If the serial port cannot be opened or if the</span>
+<span class="sd">                               device on the port is not a valid Chaino master.</span>
+<span class="sd">            </span>
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                # Connect to the master device itself</span>
+<span class="sd">                master_device = Chaino(&quot;COM9&quot;)</span>
+
+<span class="sd">                # Target a slave device with I2C address 0x42 through the same master</span>
+<span class="sd">                slave_device = Chaino(&quot;COM9&quot;, 0x42)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">i2c_addr</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">port</span>
+
+            <span class="k">if</span> <span class="n">port</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_serials</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_connect_serial</span><span class="p">()</span> <span class="c1">#serial port 연결</span>
+
+            <span class="k">elif</span> <span class="n">i2c_addr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#만약 port가 _serials에 있다면 이미 연결된 것임</span>
+                <span class="n">print_err2</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Serial port(&quot;</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s1">&quot;) is already opened.&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span> <span class="o">=</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_serials</span><span class="p">[</span><span class="n">port</span><span class="p">]</span> <span class="c1">#이미 연결된 serial 객체를 가져온다</span>
+
+
+        <span class="c1">#def _check_connection(self):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_connect_serial</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="c1"># 2025/7/19:(eps32) 921600 이 *460800 보다 오히려 더 느려진다. (2ms)</span>
+            <span class="c1"># 2025/7/21:(RP2040zero) 921600 이 *460800 보다 더 빠르지 않다.(0.8ms &lt; esp32보다 더 고속동작)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">Serial</span><span class="p">(</span>
+                    <span class="n">port</span>        <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">,</span>
+                    <span class="n">baudrate</span>    <span class="o">=</span> <span class="mi">460800</span><span class="p">,</span> <span class="c1"># 921600 &lt; **460800 &gt; 230400 &gt; 115200</span>
+                    <span class="n">timeout</span>     <span class="o">=</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_SERIAL_TIMEOUT</span><span class="p">,</span> <span class="c1"># **read** timeout</span>
+                    <span class="n">write_timeout</span> <span class="o">=</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_SERIAL_TIMEOUT</span><span class="p">,</span> <span class="c1">#write timeout</span>
+                    <span class="n">bytesize</span>    <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">EIGHTBITS</span><span class="p">,</span>
+                    <span class="n">parity</span>      <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">PARITY_NONE</span><span class="p">,</span>
+                    <span class="n">stopbits</span>    <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">STOPBITS_ONE</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_clear_buffers</span><span class="p">()</span> <span class="c1"># 버퍼 클리어 (문제 2 해결)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;ImChn&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_chaino_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">who</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_my_slave_addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_addr</span><span class="p">()</span>
+                    <span class="n">Chaino</span><span class="o">.</span><span class="n">_serials</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span>
+                
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="c1">#print_err(str(e))</span>
+                    <span class="c1">#print_red(f&#39;\nSerial port(&quot;{self._port}&quot;) does not connected to Chaino device.&#39;)</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Serial port(&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="si">}</span><span class="s1">&quot;) does not connected to Chaino device.&#39;</span><span class="p">)</span>
+                    <span class="c1">#sys.exit() </span>
+
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_serial_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">packet</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">packet</span><span class="o">+</span><span class="n">bEOT</span><span class="p">)</span> <span class="c1">#끝에 bEOT를 붙여서 전송</span>
+            <span class="c1">#self._serial.flush() # AI가 flush()는 필요치 않다고 함</span>
+
+        
+
+        <span class="c1"># (2025/07/29:수정) serial port에서 {EOT}까지 패킷을 읽는다</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_read_packet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+            <span class="c1">#CRC16에 우연히 \x04(EOT)가 포함될 수 있으므로</span>
+            <span class="c1">#첫 2byte를 먼저 강제로 읽은 후, 그 나머지를 {EOT}까지 읽는다.</span>
+            <span class="n">packet</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">read_until</span><span class="p">(</span><span class="n">bEOT</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">bEOT</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">packet</span> <span class="o">+</span> <span class="n">line</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># EOT 제거</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1">#print_err(&quot;Fail to receive [EOT] via Serial&quot;)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_clear_buffers</span><span class="p">()</span> <span class="c1"># 버퍼를 클리어하고 None을 반환</span>
+                <span class="k">return</span> <span class="kc">None</span>        
+
+
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_clear_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">reset_input_buffer</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">reset_output_buffer</span><span class="p">()</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># 버퍼 안정화 대기</span>
+            <span class="c1"># 추가로 남은 데이터가 있다면 읽어서 버림</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">in_waiting</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_serial</span><span class="o">.</span><span class="n">in_waiting</span><span class="p">)</span>
+
+
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">exec_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Executes a function by its ID on the target Chaino device.</span>
+
+<span class="sd">            This is the core low-level method for sending commands. It constructs a</span>
+<span class="sd">            Chaino packet with the specified function ID and arguments, sends it over</span>
+<span class="sd">            serial, and handles the response, including CRC checks and retries.</span>
+<span class="sd">            Higher-level methods like `who()` or `set_neopixel()` use this internally.</span>
+
+<span class="sd">            :param func_num: The integer ID of the function to execute on the</span>
+<span class="sd">                             Arduino device (e.g., 1~200 for user-defined functions).</span>
+<span class="sd">            :type func_num: int</span>
+<span class="sd">            :param args: A variable number of arguments to pass to the remote function.</span>
+<span class="sd">                         Arguments are automatically converted to strings.</span>
+<span class="sd">            :return: The value(s) returned from the remote function. Can be ``None`` if</span>
+<span class="sd">                     there&#39;s no return value, a ``str`` for a single return value, or a</span>
+<span class="sd">                     ``list[str]`` for multiple return values.</span>
+<span class="sd">            :rtype: None | str | list[str]</span>
+<span class="sd">            :raises Exception: If communication fails after multiple retries, a CRC</span>
+<span class="sd">                               error persists, or the remote function reports an error.</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                # Assuming a function with ID 12 is registered on the Arduino</span>
+<span class="sd">                adc_str = master.exec_func(12, 13)</span>
+<span class="sd">                adc = int(adc_str)</span>
+<span class="sd">                print(f&quot;adc result: {adc}&quot;)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">packet</span> <span class="o">=</span> <span class="n">gen_exec_func_packet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_addr</span><span class="p">,</span> <span class="n">func_num</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="c1">#print_packet(packet)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_serial_write</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span> <span class="c1">#(1) packet 송신</span>
+
+            <span class="k">for</span> <span class="n">try_count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span><span class="p">):</span>
+
+                <span class="n">packet_ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_packet</span><span class="p">()</span> <span class="c1">#패킷 수신</span>
+                <span class="c1">#print(self._str_packet(packet_ret))</span>
+
+                <span class="k">if</span> <span class="n">packet_ret</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1">#print_err(f&quot;Serial통신 수신 장애({try_count+1}).&quot;)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_rd_crc_err</span> <span class="o">+=</span><span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">try_count</span> <span class="o">&lt;</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span> <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Max retries reached for serial read error.&quot;</span><span class="p">)</span> 
+                        <span class="c1">#sys.exit()</span>
+
+                <span class="c1">#print(f&quot;수신 시도 {retry_attempt + 1}/{Chaino._MAX_RETRIES},&quot;,end=&quot;&quot;)</span>
+                <span class="c1">#print_packet(packet_ret, &quot;수신패킷:&quot;)</span>
+                <span class="n">is_crc_ok</span> <span class="o">=</span> <span class="n">is_crc_matched</span><span class="p">(</span><span class="n">packet_ret</span><span class="p">)</span>
+
+                <span class="c1">#디버그/디버그/디버깅 --------------------------------------</span>
+                <span class="c1">#if randint(1,20)==1: is_crc_ok = False;#디버그용</span>
+                <span class="c1">#--------------------------------------------------------</span>
+                
+                <span class="c1"># (3) packet_ret의 crc16을 체크해서 오류가 났다면 packet_request_resend 패킷을 ESP로 보낸다</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_crc_ok</span><span class="p">:</span>
+                    <span class="c1">#print_err(&quot;Recieved packet CRC Error &quot;+str_packet(packet_ret), end=&quot;&quot;)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_rd_crc_err</span> <span class="o">+=</span><span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">try_count</span> <span class="o">&lt;</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="c1">#print(f&quot; -&gt; Request Resend({try_count+1}/{Chaino._MAX_RETRIES})&quot;)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_serial_write</span><span class="p">(</span><span class="n">PACKET_RQ_RESEND</span><span class="p">)</span>
+                        <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Max retries reached for received packet CRC error.&quot;</span><span class="p">)</span>
+                        <span class="c1">#sys.exit()</span>
+                
+                <span class="c1"># (4) packet_ret에 crc 오류가 없다면 -&gt; 첫 문자(header)는 &#39;E&#39;,&#39;S&#39;,&#39;F&#39; 세 경우뿐</span>
+                <span class="c1"># header가 E라면이쪽에서 보낸 packet이 수신쪽에서 crc오류 발생</span>
+                <span class="k">if</span> <span class="nb">chr</span><span class="p">(</span><span class="n">packet_ret</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="s1">&#39;E&#39;</span><span class="p">:</span> 
+                    <span class="c1">#print_err2(&quot;Serial Writing CRC Error &quot;+str_packet(packet), end=&quot;&quot;)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cnt_wrt_crc_err</span> <span class="o">+=</span><span class="mi">1</span>
+                    <span class="k">if</span> <span class="n">try_count</span> <span class="o">&lt;</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="c1">#print(f&quot; -&gt; Rewriting packet({try_count+1}/{Chaino._MAX_RETRIES})&quot;)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_serial_write</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span> <span class="c1">#packet을 다시 보낸다</span>
+                        <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Max retries reached for resending packet error.&quot;</span><span class="p">)</span>
+                        <span class="c1">#sys.exit()</span>
+                
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_response</span><span class="p">(</span><span class="n">packet_ret</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>  <span class="c1"># 응답 패킷 파싱 후 반환</span>
+
+
+<span class="c1">##################################################################</span>
+<span class="k">else</span><span class="p">:</span> <span class="c1"># micropython에서는 binascii 모듈에 crc_hqx함수가 없음 #=============================</span>
+<span class="c1">###################################################################</span>
+    
+    <span class="kn">from</span><span class="w"> </span><span class="nn">machine</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pin</span><span class="p">,</span> <span class="n">I2C</span>
+    
+    
+<div class="viewcode-block" id="Chaino">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Chaino</span><span class="p">(</span><span class="n">_ChainoBase</span><span class="p">):</span>    
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The primary client class for communicating with a Chaino device from MicroPython.</span>
+
+<span class="sd">        This class acts as an I2C master to communicate with Chaino slave devices.</span>
+<span class="sd">        It manages I2C transactions, packet formatting, CRC checksums, and communication</span>
+<span class="sd">        retries automatically.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#chaino는 I2C1을 사용</span>
+        <span class="n">_Wire1</span> <span class="o">=</span> <span class="n">I2C</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sda</span><span class="o">=</span><span class="n">Pin</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">scl</span><span class="o">=</span><span class="n">Pin</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">freq</span><span class="o">=</span><span class="mi">400000</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Chaino.scan">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino.scan">[docs]</a>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">scan</span><span class="p">():</span> <span class="c1">#i2c 포트 스캔 함수</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Scans the I2C bus for connected Chaino slave devices.</span>
+
+<span class="sd">            This method performs an I2C scan, and for each device found, it</span>
+<span class="sd">            attempts to communicate to verify if it&#39;s a Chaino slave. It prints</span>
+<span class="sd">            a list of found and identified Chaino devices.</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                Chaino.scan()</span>
+
+<span class="sd">            Example Output::</span>
+
+<span class="sd">                I2C1 scan starts ...</span>
+<span class="sd">                Chaino_Hana (slave addr:0x42)</span>
+<span class="sd">                Chaino_Unknown (slave addr:0x45)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I2C1 scan starts ... &quot;</span><span class="p">)</span>
+            <span class="n">addr_lst</span> <span class="o">=</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_Wire1</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">addr_lst</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">addr</span> <span class="ow">in</span> <span class="n">addr_lst</span><span class="p">:</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="n">Chaino</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+                    <span class="n">print_yellow</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">who</span><span class="p">()</span><span class="si">}</span><span class="s2"> (slave addr:0x</span><span class="si">{</span><span class="n">addr</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">print_err</span><span class="p">(</span><span class="s2">&quot;No slave devices found.&quot;</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="Chaino.ping">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino.ping">[docs]</a>
+        <span class="k">def</span><span class="w"> </span><span class="nf">ping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Measures the round-trip communication latency to the target device.</span>
+
+<span class="sd">            This method sends a simple command (`who()`) over I2C and measures the</span>
+<span class="sd">            time it takes to receive a response. The result, in milliseconds, is</span>
+<span class="sd">            printed to the console.</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                slave = Chaino(0x42)</span>
+<span class="sd">                slave.ping()</span>
+<span class="sd">            </span>
+<span class="sd">            Example Output::</span>
+
+<span class="sd">                ping... elapsed time to execute who() : 5.134 ms</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ping...&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ticks_us</span><span class="p">()</span>   <span class="c1"># 시작 시간 (µs)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">who</span><span class="p">()</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ticks_us</span><span class="p">()</span>     <span class="c1"># 종료 시간 (µs)</span>
+            <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">ticks_diff</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>  <span class="c1"># 실행 시간 계산</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; elapsed time to execute who() : </span><span class="si">{</span><span class="n">elapsed</span><span class="o">/</span><span class="mi">1000</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ms&quot;</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="Chaino.__init__">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino.__init__">[docs]</a>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Initializes a connection to a Chaino slave device over the I2C bus.</span>
+
+<span class="sd">            :param i2c_addr: The 7-bit I2C address of the target slave device.</span>
+<span class="sd">            :type i2c_addr: int</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                # Connect to a slave device with I2C address 0x42</span>
+<span class="sd">                slave_device = Chaino(0x42)</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span></div>
+
+            
+        
+        
+<div class="viewcode-block" id="Chaino.exec_func">
+<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino.exec_func">[docs]</a>
+        <span class="k">def</span><span class="w"> </span><span class="nf">exec_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_num</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Executes a function by its ID on the target I2C slave device.</span>
+
+<span class="sd">            This is the core low-level method for sending commands. It constructs a</span>
+<span class="sd">            Chaino packet and sends it over the I2C bus, handling the response,</span>
+<span class="sd">            checksums, and retries.</span>
+
+<span class="sd">            :param func_num: The integer ID of the function to execute on the</span>
+<span class="sd">                             Arduino device.</span>
+<span class="sd">            :type func_num: int</span>
+<span class="sd">            :param args: A variable number of arguments to pass to the remote function.</span>
+<span class="sd">            :return: The value(s) returned from the remote function. Can be ``None``,</span>
+<span class="sd">                     a ``str``, or a ``list[str]``.</span>
+<span class="sd">            :rtype: None | str | list[str]</span>
+<span class="sd">            :raises Exception: If I2C communication fails or the remote function</span>
+<span class="sd">                               reports an error.</span>
+<span class="sd">            &quot;&quot;&quot;</span>            
+            <span class="n">addr</span>   <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_addr</span>
+            <span class="n">packet</span> <span class="o">=</span> <span class="n">gen_exec_func_packet</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">func_num</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">Chaino</span><span class="o">.</span><span class="n">_Wire1</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">packet</span><span class="p">)</span>
+                    <span class="n">buf</span> <span class="o">=</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_Wire1</span><span class="o">.</span><span class="n">readfrom</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Slave(addr:0x</span><span class="si">{</span><span class="n">addr</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">) write error&quot;</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="n">header</span><span class="p">,</span> <span class="n">ret_len</span><span class="p">,</span> <span class="n">rx_ck</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">buf</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">buf</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">calc_ck</span> <span class="o">=</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">header</span> <span class="o">+</span> <span class="n">ret_len</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>
+
+                <span class="c1"># (a) 슬레이브가 &#39;E&#39; 알림 보냄  (b) 체크섬 불일치 → 재시도</span>
+                <span class="k">if</span> <span class="n">header</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">rx_ck</span> <span class="o">!=</span> <span class="n">calc_ck</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">why</span> <span class="o">=</span> <span class="s2">&quot;crc error&quot;</span> <span class="k">if</span> <span class="n">header</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;checksum mismatch&quot;</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Slave(addr:0x</span><span class="si">{</span><span class="n">addr</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">) header invalid: </span><span class="si">{</span><span class="n">why</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+            
+            <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">packet_ret</span> <span class="o">=</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_Wire1</span><span class="o">.</span><span class="n">readfrom</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">ret_len</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Slave(addr:0x</span><span class="si">{</span><span class="n">addr</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">) read error&quot;</span><span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="n">is_crc_ok</span> <span class="o">=</span> <span class="n">is_crc_matched</span><span class="p">(</span><span class="n">packet_ret</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_crc_ok</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">attempt</span> <span class="o">==</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">_MAX_RETRIES</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received packet from slave(addr:0x</span><span class="si">{</span><span class="n">addr</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">) CRC error&quot;</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                
+                <span class="k">if</span> <span class="n">packet_ret</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="nb">ord</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">):</span> <span class="c1">#성공</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_response</span><span class="p">(</span><span class="n">packet_ret</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c1">#&#39;S&#39;가 아니면 &#39;F&#39;임</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fail to execute function#</span><span class="si">{</span><span class="n">func_num</span><span class="si">}</span><span class="s2"> at the slave(0x</span><span class="si">{</span><span class="n">addr</span><span class="si">:</span><span class="s2">02x</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+            <span class="c1"># 여기 오면 모두 실패</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Slave(addr:0x</span><span class="si">{addr:02x}</span><span class="s2">) Retry limit exceeded&quot;</span><span class="p">)</span></div>
+</div>
+
+    
+
+<span class="c1">########################################################################</span>
+<span class="c1"># 테스트 코드</span>
+<span class="c1">########################################################################    </span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">os</span>
+
+    <span class="c1"># Ensure that the parent of this package folder (&quot;src&quot;) is on sys.path</span>
+    <span class="n">pkg_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span>   <span class="c1"># .../src/chaino</span>
+    <span class="n">src_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">pkg_dir</span><span class="p">)</span>                     <span class="c1"># .../src</span>
+    <span class="k">if</span> <span class="n">src_dir</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">src_dir</span><span class="p">)</span>
+
+    <span class="c1"># Now import and run the real CLI entrypoint as a package module</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">chaino.__main__</span><span class="w"> </span><span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">_cli_main</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">_cli_main</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jang-Hyun Park.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

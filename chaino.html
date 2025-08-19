@@ -1,0 +1,940 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>chaino package &mdash; chaino  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="chaino" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            chaino
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">chaino</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">chaino package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-chaino.chaino">chaino.chaino module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#chaino-protocol-client-library">Chaino Protocol Client Library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.gen_CRC16_XMODEM"><code class="docutils literal notranslate"><span class="pre">gen_CRC16_XMODEM()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.map_args"><code class="docutils literal notranslate"><span class="pre">map_args()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.is_crc_matched"><code class="docutils literal notranslate"><span class="pre">is_crc_matched()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.gen_exec_func_packet"><code class="docutils literal notranslate"><span class="pre">gen_exec_func_packet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.str_packet"><code class="docutils literal notranslate"><span class="pre">str_packet()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.print_err"><code class="docutils literal notranslate"><span class="pre">print_err()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.print_err2"><code class="docutils literal notranslate"><span class="pre">print_err2()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.print_red"><code class="docutils literal notranslate"><span class="pre">print_red()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.print_yellow"><code class="docutils literal notranslate"><span class="pre">print_yellow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.chaino.Chaino"><code class="docutils literal notranslate"><span class="pre">Chaino</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-chaino.hana">chaino.hana module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#chaino-hana-board-control-library">Chaino Hana Board Control Library</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#chaino.hana.Hana"><code class="docutils literal notranslate"><span class="pre">Hana</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">chaino</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">chaino</a></li>
+      <li class="breadcrumb-item active">chaino package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/chaino.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-chaino">
+<span id="chaino-package"></span><h1>chaino package<a class="headerlink" href="#module-chaino" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-chaino.chaino">
+<span id="chaino-chaino-module"></span><h2>chaino.chaino module<a class="headerlink" href="#module-chaino.chaino" title="Link to this heading"></a></h2>
+<section id="chaino-protocol-client-library">
+<h3>Chaino Protocol Client Library<a class="headerlink" href="#chaino-protocol-client-library" title="Link to this heading"></a></h3>
+<p>This module provides the Python client-side implementation for the Chaino protocol,
+allowing communication with Chaino-enabled Arduino devices. It supports both standard
+CPython (via Serial/pyserial) and MicroPython (via I2C).</p>
+<p>The primary entry point is the <a class="reference internal" href="#chaino.chaino.Chaino" title="chaino.chaino.Chaino"><code class="xref py py-class docutils literal notranslate"><span class="pre">Chaino</span></code></a> class, which abstracts the low-level
+details of packet creation, CRC checking, and communication.</p>
+<section id="cpython-serial-usage">
+<h4>CPython (Serial) Usage:<a class="headerlink" href="#cpython-serial-usage" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">chaino</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chaino</span>
+
+<span class="c1"># Connect to the master device on COM9</span>
+<span class="n">master</span> <span class="o">=</span> <span class="n">Chaino</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">master</span><span class="o">.</span><span class="n">who</span><span class="p">())</span>
+
+<span class="c1"># Connect to a slave device at I2C address 0x42 via the master on COM9</span>
+<span class="n">slave</span> <span class="o">=</span> <span class="n">Chaino</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="o">=</span><span class="mh">0x42</span><span class="p">)</span>
+<span class="n">slave</span><span class="o">.</span><span class="n">set_neopixel</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># Set slave&#39;s LED to red</span>
+</pre></div>
+</div>
+</section>
+<section id="micropython-i2c-usage">
+<h4>MicroPython (I2C) Usage:<a class="headerlink" href="#micropython-i2c-usage" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">chaino</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chaino</span>
+
+<span class="c1"># Scan for connected slave devices on the I2C bus</span>
+<span class="n">Chaino</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+
+<span class="c1"># Connect to a slave device at I2C address 0x42</span>
+<span class="n">slave</span> <span class="o">=</span> <span class="n">Chaino</span><span class="p">(</span><span class="mh">0x42</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">slave</span><span class="o">.</span><span class="n">who</span><span class="p">())</span>
+<span class="n">slave</span><span class="o">.</span><span class="n">set_neopixel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># Set slave&#39;s LED to green</span>
+</pre></div>
+</div>
+</section>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="chaino.chaino.gen_CRC16_XMODEM">
+<span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">gen_CRC16_XMODEM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/chaino/chaino.html#gen_CRC16_XMODEM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.gen_CRC16_XMODEM" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chaino.chaino.map_args">
+<span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">map_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#map_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.map_args" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chaino.chaino.is_crc_matched">
+<span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">is_crc_matched</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/chaino/chaino.html#is_crc_matched"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.is_crc_matched" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chaino.chaino.gen_exec_func_packet">
+<span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">gen_exec_func_packet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i2c_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bytes</span></span></span><a class="reference internal" href="_modules/chaino/chaino.html#gen_exec_func_packet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.gen_exec_func_packet" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chaino.chaino.str_packet">
+<span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">str_packet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packet</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bytes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#str_packet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.str_packet" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chaino.chaino.print_err">
+<span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">print_err</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#print_err"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.print_err" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chaino.chaino.print_err2">
+<span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">print_err2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#print_err2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.print_err2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chaino.chaino.print_red">
+<span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">print_red</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#print_red"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.print_red" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chaino.chaino.print_yellow">
+<span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">print_yellow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\n'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#print_yellow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.print_yellow" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">chaino.chaino.</span></span><span class="sig-name descname"><span class="pre">Chaino</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i2c_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#Chaino"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.Chaino" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ChainoBase</span></code></p>
+<p>The primary client class for communicating with a Chaino-enabled device from CPython.</p>
+<p>This class handles serial communication with a Chaino master device. It can send
+commands to the master itself or relay them to a specific I2C slave device
+connected to the master. It manages packet formatting, CRC checksums, and
+communication retries automatically.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino.scan">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#Chaino.scan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.Chaino.scan" title="Link to this definition"></a></dt>
+<dd><p>Scans available serial ports for connected Chaino master devices.</p>
+<p>This method iterates through all detected serial ports, attempts to
+connect, and verifies if each is a Chaino master by sending a handshake
+command. It prints a list of found Chaino devices and other ports.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Chaino</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Example Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Serial</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">):</span> <span class="n">Chaino_Hana</span> <span class="p">(</span><span class="n">I2C</span> <span class="n">addr</span><span class="o">.</span><span class="p">:</span><span class="mh">0x40</span><span class="p">)</span>
+<span class="n">Serial</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">):</span> <span class="n">Not</span> <span class="n">a</span> <span class="n">Chaino</span> <span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="n">device</span>
+<span class="n">Note</span><span class="p">:</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span> <span class="n">can</span> <span class="n">detect</span> <span class="o">**</span><span class="n">MASTER</span><span class="o">**</span> <span class="n">Chaino</span> <span class="n">devices</span> <span class="n">only</span><span class="o">.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino.get_addr">
+<span class="sig-name descname"><span class="pre">get_addr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#chaino.chaino.Chaino.get_addr" title="Link to this definition"></a></dt>
+<dd><p>Gets the currently configured I2C address of the target device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The I2C address as a hexadecimal string, e.g., “0x40”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino.get_version">
+<span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#chaino.chaino.Chaino.get_version" title="Link to this definition"></a></dt>
+<dd><p>Gets the firmware version string of the target device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The firmware version string, e.g., “Chaino_Hana Firmware v0.9.4”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino.ping">
+<span class="sig-name descname"><span class="pre">ping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#Chaino.ping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.Chaino.ping" title="Link to this definition"></a></dt>
+<dd><p>Measures the round-trip communication latency to the target device.</p>
+<p>This method sends a simple command (<cite>who()</cite>) and measures the time it
+takes to receive a response. The result, in milliseconds, is printed
+to the console. This is useful for checking connection health and speed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">Chaino</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">)</span>
+<span class="n">device</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Example Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ping</span><span class="o">...</span> <span class="n">elapsed</span> <span class="n">time</span> <span class="n">to</span> <span class="n">execute</span> <span class="n">who</span><span class="p">()</span> <span class="p">:</span> <span class="mf">0.934</span> <span class="n">ms</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino.set_addr">
+<span class="sig-name descname"><span class="pre">set_addr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.chaino.Chaino.set_addr" title="Link to this definition"></a></dt>
+<dd><p>Changes the I2C address of the target device.</p>
+<p>This change is written to the device’s EEPROM, making it persistent
+across power cycles. <strong>A device reset is required for the new address
+to take effect.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_addr</strong> (<em>int</em>) – The new 7-bit I2C address to set (e.g., 0x45).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A status message from the device indicating the result.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino.set_neopixel">
+<span class="sig-name descname"><span class="pre">set_neopixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.chaino.Chaino.set_neopixel" title="Link to this definition"></a></dt>
+<dd><p>Sets the color of the onboard NeoPixel LED on the target device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>int</em>) – The red component of the color (0-255).</p></li>
+<li><p><strong>g</strong> (<em>int</em>) – The green component of the color (0-255).</p></li>
+<li><p><strong>b</strong> (<em>int</em>) – The blue component of the color (0-255).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino.who">
+<span class="sig-name descname"><span class="pre">who</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#chaino.chaino.Chaino.who" title="Link to this definition"></a></dt>
+<dd><p>Gets the identification string of the target device.</p>
+<p>The string is the device name that is set in the Arduino firmware
+which starts as “<a href="#id1"><span class="problematic" id="id2">Chaino_</span></a>”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The identification string, e.g., “Chaino_Hana”, “Chaino_Unknown”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i2c_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#Chaino.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.Chaino.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initializes a connection to a Chaino device over a serial port.</p>
+<p>If a connection for the given port does not already exist, it will be
+created and verified. If it exists, the existing connection is reused.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>port</strong> (<em>str</em>) – The name of the serial port (e.g., “COM9” on Windows,
+“/dev/ttyACM0” on Linux).</p></li>
+<li><p><strong>i2c_addr</strong> (<em>int</em>) – The 7-bit I2C address of the target slave device.
+If 0 (default), commands are sent to the master
+device connected via serial.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If the serial port cannot be opened or if the
+device on the port is not a valid Chaino master.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Connect to the master device itself</span>
+<span class="n">master_device</span> <span class="o">=</span> <span class="n">Chaino</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">)</span>
+
+<span class="c1"># Target a slave device with I2C address 0x42 through the same master</span>
+<span class="n">slave_device</span> <span class="o">=</span> <span class="n">Chaino</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">,</span> <span class="mh">0x42</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.chaino.Chaino.exec_func">
+<span class="sig-name descname"><span class="pre">exec_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/chaino.html#Chaino.exec_func"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.chaino.Chaino.exec_func" title="Link to this definition"></a></dt>
+<dd><p>Executes a function by its ID on the target Chaino device.</p>
+<p>This is the core low-level method for sending commands. It constructs a
+Chaino packet with the specified function ID and arguments, sends it over
+serial, and handles the response, including CRC checks and retries.
+Higher-level methods like <cite>who()</cite> or <cite>set_neopixel()</cite> use this internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func_num</strong> (<em>int</em>) – The integer ID of the function to execute on the
+Arduino device (e.g., 1~200 for user-defined functions).</p></li>
+<li><p><strong>args</strong> – A variable number of arguments to pass to the remote function.
+Arguments are automatically converted to strings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value(s) returned from the remote function. Can be <code class="docutils literal notranslate"><span class="pre">None</span></code> if
+there’s no return value, a <code class="docutils literal notranslate"><span class="pre">str</span></code> for a single return value, or a
+<code class="docutils literal notranslate"><span class="pre">list[str]</span></code> for multiple return values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None | str | list[str]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If communication fails after multiple retries, a CRC
+error persists, or the remote function reports an error.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Assuming a function with ID 12 is registered on the Arduino</span>
+<span class="n">adc_str</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+<span class="n">adc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">adc_str</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;adc result: </span><span class="si">{</span><span class="n">adc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-chaino.hana">
+<span id="chaino-hana-module"></span><h2>chaino.hana module<a class="headerlink" href="#module-chaino.hana" title="Link to this heading"></a></h2>
+<section id="chaino-hana-board-control-library">
+<h3>Chaino Hana Board Control Library<a class="headerlink" href="#chaino-hana-board-control-library" title="Link to this heading"></a></h3>
+<p>This module provides a high-level, Pythonic interface for controlling a
+Chaino_Hana board. It abstracts the underlying function calls into
+an intuitive, Arduino-like API.</p>
+<p>The primary class, <a class="reference internal" href="#chaino.hana.Hana" title="chaino.hana.Hana"><code class="xref py py-class docutils literal notranslate"><span class="pre">Hana</span></code></a>, inherits all the base communication features
+from <code class="xref py py-class docutils literal notranslate"><span class="pre">chaino.Chaino</span></code> and adds specific methods for hardware manipulation
+like GPIO, ADC, PWM, and tone generation.</p>
+<section id="cpython-usage">
+<h4>CPython Usage:<a class="headerlink" href="#cpython-usage" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">chaino</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hana</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="c1"># Connect to a Hana board (master or slave)</span>
+<span class="n">hana</span> <span class="o">=</span> <span class="n">Hana</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="o">=</span><span class="mh">0x42</span><span class="p">)</span>
+
+<span class="c1"># Use Arduino-like functions</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pin_mode</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">OUTPUT</span><span class="p">)</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_digital</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">HIGH</span><span class="p">)</span>
+
+<span class="n">pot_value</span> <span class="o">=</span> <span class="n">hana</span><span class="o">.</span><span class="n">read_analog</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Analog value: </span><span class="si">{</span><span class="n">pot_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span> <span class="c1"># Play a C4 note for 500ms</span>
+</pre></div>
+</div>
+</section>
+<section id="micropython-usage">
+<h4>MicroPython Usage:<a class="headerlink" href="#micropython-usage" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">chaino</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hana</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="c1"># Connect to a Chaino_Hana slave board on the I2C bus</span>
+<span class="n">hana</span> <span class="o">=</span> <span class="n">Hana</span><span class="p">(</span><span class="mh">0x42</span><span class="p">)</span>
+
+<span class="c1"># Blink the onboard neopixel</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pin_mode</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">OUTPUT</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">hana</span><span class="o">.</span><span class="n">set_neopixel</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">hana</span><span class="o">.</span><span class="n">set_neopixel</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="chaino.hana.Hana">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">chaino.hana.</span></span><span class="sig-name descname"><span class="pre">Hana</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i2c_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/hana.html#Hana"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.hana.Hana" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_HanaCommon</span></code>, <a class="reference internal" href="#chaino.chaino.Chaino" title="chaino.chaino.Chaino"><code class="xref py py-class docutils literal notranslate"><span class="pre">Chaino</span></code></a></p>
+<p>A high-level interface for controlling a Chaino_Hana board from CPython.</p>
+<p>This class combines the serial communication capabilities of <code class="xref py py-class docutils literal notranslate"><span class="pre">Chaino</span></code>
+with the Arduino-like hardware control methods specific to the Chaino_Hana board.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>port</strong> (<em>str</em>) – The name of the serial port (e.g., “COM9”).</p></li>
+<li><p><strong>i2c_addr</strong> (<em>int</em>) – The I2C address of the target Chaino_Hana board. If 0 (default),
+commands are sent to the master device connected via serial.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.HIGH">
+<span class="sig-name descname"><span class="pre">HIGH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#chaino.hana.Hana.HIGH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.INPUT">
+<span class="sig-name descname"><span class="pre">INPUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#chaino.hana.Hana.INPUT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.INPUT_PULLDOWN">
+<span class="sig-name descname"><span class="pre">INPUT_PULLDOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#chaino.hana.Hana.INPUT_PULLDOWN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.INPUT_PULLUP">
+<span class="sig-name descname"><span class="pre">INPUT_PULLUP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#chaino.hana.Hana.INPUT_PULLUP" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.LOW">
+<span class="sig-name descname"><span class="pre">LOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#chaino.hana.Hana.LOW" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.OUTPUT">
+<span class="sig-name descname"><span class="pre">OUTPUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#chaino.hana.Hana.OUTPUT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i2c_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/chaino/hana.html#Hana.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.hana.Hana.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.exec_func">
+<span class="sig-name descname"><span class="pre">exec_func</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func_num</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.exec_func" title="Link to this definition"></a></dt>
+<dd><p>Executes a function by its ID on the target Chaino device.</p>
+<p>This is the core low-level method for sending commands. It constructs a
+Chaino packet with the specified function ID and arguments, sends it over
+serial, and handles the response, including CRC checks and retries.
+Higher-level methods like <cite>who()</cite> or <cite>set_neopixel()</cite> use this internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func_num</strong> (<em>int</em>) – The integer ID of the function to execute on the
+Arduino device (e.g., 1~200 for user-defined functions).</p></li>
+<li><p><strong>args</strong> – A variable number of arguments to pass to the remote function.
+Arguments are automatically converted to strings.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The value(s) returned from the remote function. Can be <code class="docutils literal notranslate"><span class="pre">None</span></code> if
+there’s no return value, a <code class="docutils literal notranslate"><span class="pre">str</span></code> for a single return value, or a
+<code class="docutils literal notranslate"><span class="pre">list[str]</span></code> for multiple return values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None | str | list[str]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If communication fails after multiple retries, a CRC
+error persists, or the remote function reports an error.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Assuming a function with ID 12 is registered on the Arduino</span>
+<span class="n">adc_str</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+<span class="n">adc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">adc_str</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;adc result: </span><span class="si">{</span><span class="n">adc</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.get_addr">
+<span class="sig-name descname"><span class="pre">get_addr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#chaino.hana.Hana.get_addr" title="Link to this definition"></a></dt>
+<dd><p>Gets the currently configured I2C address of the target device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The I2C address as a hexadecimal string, e.g., “0x40”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.get_millis">
+<span class="sig-name descname"><span class="pre">get_millis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#chaino.hana.Hana.get_millis" title="Link to this definition"></a></dt>
+<dd><p>Returns the number of milliseconds passed since the board began running.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">millis()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of milliseconds as an integer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><p>This number will overflow (go back to zero) after approximately 50 days.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.get_version">
+<span class="sig-name descname"><span class="pre">get_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#chaino.hana.Hana.get_version" title="Link to this definition"></a></dt>
+<dd><p>Gets the firmware version string of the target device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The firmware version string, e.g., “Chaino_Hana Firmware v0.9.4”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.ping">
+<span class="sig-name descname"><span class="pre">ping</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.ping" title="Link to this definition"></a></dt>
+<dd><p>Measures the round-trip communication latency to the target device.</p>
+<p>This method sends a simple command (<cite>who()</cite>) and measures the time it
+takes to receive a response. The result, in milliseconds, is printed
+to the console. This is useful for checking connection health and speed.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">Chaino</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">)</span>
+<span class="n">device</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Example Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ping</span><span class="o">...</span> <span class="n">elapsed</span> <span class="n">time</span> <span class="n">to</span> <span class="n">execute</span> <span class="n">who</span><span class="p">()</span> <span class="p">:</span> <span class="mf">0.934</span> <span class="n">ms</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.read_analog">
+<span class="sig-name descname"><span class="pre">read_analog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#chaino.hana.Hana.read_analog" title="Link to this definition"></a></dt>
+<dd><p>Reads the value from the specified analog pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">analogRead()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pin</strong> (<em>int</em>) – The number of the analog input pin to read from (e.g., 26~29 on RP2040).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The analog reading on the pin. The range depends on the ADC
+resolution (e.g., 0-1023 for 10-bit, 0-4095 for 12-bit).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Seealso<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#chaino.hana.Hana.set_adc_bits" title="chaino.hana.Hana.set_adc_bits"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_adc_bits()</span></code></a> to change the reading resolution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.read_digital">
+<span class="sig-name descname"><span class="pre">read_digital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#chaino.hana.Hana.read_digital" title="Link to this definition"></a></dt>
+<dd><p>Reads the value from a specified digital pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">digitalRead()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pin</strong> (<em>int</em>) – The number of the digital pin you want to read.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The state of the pin, either <a class="reference internal" href="#chaino.hana.Hana.HIGH" title="chaino.hana.Hana.HIGH"><code class="xref py py-attr docutils literal notranslate"><span class="pre">HIGH</span></code></a> (1) or <a class="reference internal" href="#chaino.hana.Hana.LOW" title="chaino.hana.Hana.LOW"><code class="xref py py-attr docutils literal notranslate"><span class="pre">LOW</span></code></a> (0).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">button_state</span> <span class="o">=</span> <span class="n">hana</span><span class="o">.</span><span class="n">read_digital</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">button_state</span> <span class="o">==</span> <span class="n">hana</span><span class="o">.</span><span class="n">LOW</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Button is pressed!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.scan">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scan</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.scan" title="Link to this definition"></a></dt>
+<dd><p>Scans available serial ports for connected Chaino master devices.</p>
+<p>This method iterates through all detected serial ports, attempts to
+connect, and verifies if each is a Chaino master by sending a handshake
+command. It prints a list of found Chaino devices and other ports.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Chaino</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Example Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Serial</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">):</span> <span class="n">Chaino_Hana</span> <span class="p">(</span><span class="n">I2C</span> <span class="n">addr</span><span class="o">.</span><span class="p">:</span><span class="mh">0x40</span><span class="p">)</span>
+<span class="n">Serial</span><span class="p">(</span><span class="s2">&quot;COM3&quot;</span><span class="p">):</span> <span class="n">Not</span> <span class="n">a</span> <span class="n">Chaino</span> <span class="p">(</span><span class="n">master</span><span class="p">)</span> <span class="n">device</span>
+<span class="n">Note</span><span class="p">:</span> <span class="n">Chaino</span><span class="o">.</span><span class="n">scan</span><span class="p">()</span> <span class="n">can</span> <span class="n">detect</span> <span class="o">**</span><span class="n">MASTER</span><span class="o">**</span> <span class="n">Chaino</span> <span class="n">devices</span> <span class="n">only</span><span class="o">.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_adc_bits">
+<span class="sig-name descname"><span class="pre">set_adc_bits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_adc_bits" title="Link to this definition"></a></dt>
+<dd><p>Sets the resolution for <a class="reference internal" href="#chaino.hana.Hana.read_analog" title="chaino.hana.Hana.read_analog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read_analog()</span></code></a>.
+This is equivalent to <code class="docutils literal notranslate"><span class="pre">analogReadResolution()</span></code> on supported boards.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bits</strong> (<em>int</em>) – The desired resolution in bits. Common values are 10 (for a
+range of 0-1023) or 12 (for a range of 0-4095).</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set ADC to 12-bit resolution for more precision</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_adc_bits</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">high_res_value</span> <span class="o">=</span> <span class="n">hana</span><span class="o">.</span><span class="n">read_analog</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span> <span class="c1"># Returns a value between 0 and 4095</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_addr">
+<span class="sig-name descname"><span class="pre">set_addr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_addr" title="Link to this definition"></a></dt>
+<dd><p>Changes the I2C address of the target device.</p>
+<p>This change is written to the device’s EEPROM, making it persistent
+across power cycles. <strong>A device reset is required for the new address
+to take effect.</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>new_addr</strong> (<em>int</em>) – The new 7-bit I2C address to set (e.g., 0x45).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A status message from the device indicating the result.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_neopixel">
+<span class="sig-name descname"><span class="pre">set_neopixel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_neopixel" title="Link to this definition"></a></dt>
+<dd><p>Sets the color of the onboard NeoPixel LED on the target device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>int</em>) – The red component of the color (0-255).</p></li>
+<li><p><strong>g</strong> (<em>int</em>) – The green component of the color (0-255).</p></li>
+<li><p><strong>b</strong> (<em>int</em>) – The blue component of the color (0-255).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_pin_mode">
+<span class="sig-name descname"><span class="pre">set_pin_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_pin_mode" title="Link to this definition"></a></dt>
+<dd><p>Configures the specified pin to behave either as an input or an output.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">pinMode()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The number of the pin whose mode you wish to set.</p></li>
+<li><p><strong>mode</strong> (<em>int</em>) – The mode for the pin. Can be <a class="reference internal" href="#chaino.hana.Hana.INPUT" title="chaino.hana.Hana.INPUT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">INPUT</span></code></a>, <a class="reference internal" href="#chaino.hana.Hana.OUTPUT" title="chaino.hana.Hana.OUTPUT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">OUTPUT</span></code></a>,
+<a class="reference internal" href="#chaino.hana.Hana.INPUT_PULLUP" title="chaino.hana.Hana.INPUT_PULLUP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">INPUT_PULLUP</span></code></a>, or <a class="reference internal" href="#chaino.hana.Hana.INPUT_PULLDOWN" title="chaino.hana.Hana.INPUT_PULLDOWN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">INPUT_PULLDOWN</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set pin 13 as an output for an LED</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pin_mode</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">OUTPUT</span><span class="p">)</span>
+
+<span class="c1"># Set pin 2 as an input with a pull-up for a button</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pin_mode</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">INPUT_PULLUP</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_pwm_freq">
+<span class="sig-name descname"><span class="pre">set_pwm_freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_pwm_freq" title="Link to this definition"></a></dt>
+<dd><p>Sets the frequency for PWM signals generated by <a class="reference internal" href="#chaino.hana.Hana.write_analog" title="chaino.hana.Hana.write_analog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_analog()</span></code></a>.
+This is equivalent to <code class="docutils literal notranslate"><span class="pre">analogWriteFreq()</span></code> on supported boards.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>freq</strong> (<em>int</em>) – The desired frequency in Hertz (Hz).</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set PWM frequency to 1 kHz for smoother LED fading</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pwm_freq</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_pwm_range">
+<span class="sig-name descname"><span class="pre">set_pwm_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwm_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_pwm_range" title="Link to this definition"></a></dt>
+<dd><p>Sets the range for the duty cycle used in <a class="reference internal" href="#chaino.hana.Hana.write_analog" title="chaino.hana.Hana.write_analog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_analog()</span></code></a>.
+This is equivalent to <code class="docutils literal notranslate"><span class="pre">analogWriteRange()</span></code> on supported boards.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pwm_range</strong> (<em>int</em>) – The maximum value for the duty cycle, which defines the
+PWM resolution (e.g., 255 for 8-bit, 1023 for 10-bit).</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set PWM range for 10-bit resolution</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pwm_range</span><span class="p">(</span><span class="mi">1023</span><span class="p">)</span>
+<span class="c1"># Now set LED to 50% brightness with the new range</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_analog</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.start_tone">
+<span class="sig-name descname"><span class="pre">start_tone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.start_tone" title="Link to this definition"></a></dt>
+<dd><p>Generates a square wave tone on a pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">tone()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin on which to generate the tone.</p></li>
+<li><p><strong>freq</strong> (<em>int</em><em> | </em><em>str</em>) – The frequency of the tone in Hertz, or a string representing a
+musical note (e.g., ‘c4’, ‘a#5’, ‘db3’).</p></li>
+<li><p><strong>duration</strong> (<em>int</em>) – The duration of the tone in milliseconds. If 0 (default),
+the tone plays continuously until <a class="reference internal" href="#chaino.hana.Hana.stop_tone" title="chaino.hana.Hana.stop_tone"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stop_tone()</span></code></a> is called.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If an unrecognized note string is provided.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Play a 440 Hz &#39;A&#39; note for 1 second</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+<span class="c1"># Play a &#39;C4&#39; note continuously</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">stop_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Direct frequency specification</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">chaino</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hana</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span> <span class="o">=</span> <span class="n">Hana</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># 440Hz on pin 8 for 1 second</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Note name specification</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>   <span class="c1"># A4 (440Hz) on pin 8 for 1 second</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c#5&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>   <span class="c1"># C#5 on pin 8 for 0.5 seconds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;do&#39;</span><span class="p">)</span>         <span class="c1"># Do note on pin 8 infinitely</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple melody</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">melody</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;do&#39;</span><span class="p">,</span> <span class="s1">&#39;re&#39;</span><span class="p">,</span> <span class="s1">&#39;mi&#39;</span><span class="p">,</span> <span class="s1">&#39;fa&#39;</span><span class="p">,</span> <span class="s1">&#39;sol&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">melody</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">note</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Case insensitive</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.stop_tone">
+<span class="sig-name descname"><span class="pre">stop_tone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.stop_tone" title="Link to this definition"></a></dt>
+<dd><p>Stops the tone being generated on a pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">noTone()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pin</strong> (<em>int</em>) – The pin on which to stop the tone.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Start tone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">)</span>  <span class="c1"># Play A4 note on pin 8 infinitely</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Do other work...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>    <span class="c1"># Wait 2 seconds</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Stop tone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">stop_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>     <span class="c1"># Stop tone generation on pin 8</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create silence between notes in melody</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>   <span class="c1"># Do note for 0.5 seconds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">stop_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>           <span class="c1"># Stop immediately</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>           <span class="c1"># 1.5 second silence</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>   <span class="c1"># Re note for 0.5 seconds</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>Only needed when start_tone() method’s duration parameter is 0.</p></li>
+<li><p>When duration is specified, tone stops automatically, stop_tone() is unnecessary.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.who">
+<span class="sig-name descname"><span class="pre">who</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#chaino.hana.Hana.who" title="Link to this definition"></a></dt>
+<dd><p>Gets the identification string of the target device.</p>
+<p>The string is the device name that is set in the Arduino firmware
+which starts as “<a href="#id3"><span class="problematic" id="id4">Chaino_</span></a>”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The identification string, e.g., “Chaino_Hana”, “Chaino_Unknown”.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.write_analog">
+<span class="sig-name descname"><span class="pre">write_analog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.write_analog" title="Link to this definition"></a></dt>
+<dd><p>Writes an analog value (PWM wave) to a pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">analogWrite()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin to write to.</p></li>
+<li><p><strong>duty</strong> (<em>int</em>) – The duty cycle for the PWM signal. The value should be between
+0 (always off) and the maximum range (default is 255).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Seealso<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#chaino.hana.Hana.set_pwm_freq" title="chaino.hana.Hana.set_pwm_freq"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_pwm_freq()</span></code></a>, <a class="reference internal" href="#chaino.hana.Hana.set_pwm_range" title="chaino.hana.Hana.set_pwm_range"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_pwm_range()</span></code></a></p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fade an LED to half brightness</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_analog</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.write_digital">
+<span class="sig-name descname"><span class="pre">write_digital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.write_digital" title="Link to this definition"></a></dt>
+<dd><p>Write a HIGH or a LOW value to a digital pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">digitalWrite()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The number of the pin to write to.</p></li>
+<li><p><strong>status</strong> (<em>int</em>) – The value to write, either <a class="reference internal" href="#chaino.hana.Hana.HIGH" title="chaino.hana.Hana.HIGH"><code class="xref py py-attr docutils literal notranslate"><span class="pre">HIGH</span></code></a> or <a class="reference internal" href="#chaino.hana.Hana.LOW" title="chaino.hana.Hana.LOW"><code class="xref py py-attr docutils literal notranslate"><span class="pre">LOW</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Turn an LED on</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_digital</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">HIGH</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Turn the LED off</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_digital</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">LOW</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modules.html" class="btn btn-neutral float-left" title="chaino" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jang-Hyun Park.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>chaino.hana &mdash; chaino  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            chaino
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">chaino</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">chaino</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">chaino.hana</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for chaino.hana</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Chaino Hana Board Control Library</span>
+<span class="sd">=================================</span>
+
+<span class="sd">This module provides a high-level, Pythonic interface for controlling a</span>
+<span class="sd">Chaino_Hana board. It abstracts the underlying function calls into</span>
+<span class="sd">an intuitive, Arduino-like API.</span>
+
+<span class="sd">The primary class, :class:`Hana`, inherits all the base communication features</span>
+<span class="sd">from :class:`chaino.Chaino` and adds specific methods for hardware manipulation</span>
+<span class="sd">like GPIO, ADC, PWM, and tone generation.</span>
+
+<span class="sd">CPython Usage:</span>
+<span class="sd">--------------</span>
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    from chaino import Hana</span>
+<span class="sd">    import time</span>
+
+<span class="sd">    # Connect to a Hana board (master or slave)</span>
+<span class="sd">    hana = Hana(&quot;COM9&quot;, i2c_addr=0x42)</span>
+
+<span class="sd">    # Use Arduino-like functions</span>
+<span class="sd">    hana.set_pin_mode(13, hana.OUTPUT)</span>
+<span class="sd">    hana.write_digital(13, hana.HIGH)</span>
+<span class="sd">    </span>
+<span class="sd">    pot_value = hana.read_analog(26)</span>
+<span class="sd">    print(f&quot;Analog value: {pot_value}&quot;)</span>
+
+<span class="sd">    hana.start_tone(8, &#39;c4&#39;, 500) # Play a C4 note for 500ms</span>
+
+<span class="sd">MicroPython Usage:</span>
+<span class="sd">------------------</span>
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    from chaino import Hana</span>
+<span class="sd">    import time</span>
+
+<span class="sd">    # Connect to a Chaino_Hana slave board on the I2C bus</span>
+<span class="sd">    hana = Hana(0x42)</span>
+
+<span class="sd">    # Blink the onboard neopixel</span>
+<span class="sd">    hana.set_pin_mode(13, hana.OUTPUT)</span>
+<span class="sd">    for _ in range(3):</span>
+<span class="sd">        hana.set_neopixel(255,255,255)</span>
+<span class="sd">        time.sleep(0.5)</span>
+<span class="sd">        hana.set_neopixel(0,0,0)</span>
+<span class="sd">        time.sleep(0.5)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="o">,</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.chaino</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chaino</span>  <span class="c1"># when loading package</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">chaino</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chaino</span>   <span class="c1"># when executing directly</span>
+
+
+<span class="n">_PITCHES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># 옥타브 0</span>
+    <span class="s2">&quot;b0&quot;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
+    <span class="c1"># 옥타브 1</span>
+    <span class="s2">&quot;c1&quot;</span><span class="p">:</span> <span class="mi">33</span><span class="p">,</span> <span class="s2">&quot;c#1&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s2">&quot;db1&quot;</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span> <span class="s2">&quot;d1&quot;</span><span class="p">:</span> <span class="mi">37</span><span class="p">,</span> <span class="s2">&quot;d#1&quot;</span><span class="p">:</span> <span class="mi">39</span><span class="p">,</span> <span class="s2">&quot;eb1&quot;</span><span class="p">:</span> <span class="mi">39</span><span class="p">,</span>
+    <span class="s2">&quot;e1&quot;</span><span class="p">:</span> <span class="mi">41</span><span class="p">,</span> <span class="s2">&quot;f1&quot;</span><span class="p">:</span> <span class="mi">44</span><span class="p">,</span> <span class="s2">&quot;f#1&quot;</span><span class="p">:</span> <span class="mi">46</span><span class="p">,</span> <span class="s2">&quot;gb1&quot;</span><span class="p">:</span> <span class="mi">46</span><span class="p">,</span> <span class="s2">&quot;g1&quot;</span><span class="p">:</span> <span class="mi">49</span><span class="p">,</span> <span class="s2">&quot;g#1&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span> <span class="s2">&quot;ab1&quot;</span><span class="p">:</span> <span class="mi">52</span><span class="p">,</span>
+    <span class="s2">&quot;a1&quot;</span><span class="p">:</span> <span class="mi">55</span><span class="p">,</span> <span class="s2">&quot;a#1&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span> <span class="s2">&quot;bb1&quot;</span><span class="p">:</span> <span class="mi">58</span><span class="p">,</span> <span class="s2">&quot;b1&quot;</span><span class="p">:</span> <span class="mi">62</span><span class="p">,</span>
+    <span class="c1"># 옥타브 2</span>
+    <span class="s2">&quot;c2&quot;</span><span class="p">:</span> <span class="mi">65</span><span class="p">,</span> <span class="s2">&quot;c#2&quot;</span><span class="p">:</span> <span class="mi">69</span><span class="p">,</span> <span class="s2">&quot;db2&quot;</span><span class="p">:</span> <span class="mi">69</span><span class="p">,</span> <span class="s2">&quot;d2&quot;</span><span class="p">:</span> <span class="mi">73</span><span class="p">,</span> <span class="s2">&quot;d#2&quot;</span><span class="p">:</span> <span class="mi">78</span><span class="p">,</span> <span class="s2">&quot;eb2&quot;</span><span class="p">:</span> <span class="mi">78</span><span class="p">,</span>
+    <span class="s2">&quot;e2&quot;</span><span class="p">:</span> <span class="mi">82</span><span class="p">,</span> <span class="s2">&quot;f2&quot;</span><span class="p">:</span> <span class="mi">87</span><span class="p">,</span> <span class="s2">&quot;f#2&quot;</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span> <span class="s2">&quot;gb2&quot;</span><span class="p">:</span> <span class="mi">93</span><span class="p">,</span> <span class="s2">&quot;g2&quot;</span><span class="p">:</span> <span class="mi">98</span><span class="p">,</span> <span class="s2">&quot;g#2&quot;</span><span class="p">:</span> <span class="mi">104</span><span class="p">,</span> <span class="s2">&quot;ab2&quot;</span><span class="p">:</span> <span class="mi">104</span><span class="p">,</span>
+    <span class="s2">&quot;a2&quot;</span><span class="p">:</span> <span class="mi">110</span><span class="p">,</span> <span class="s2">&quot;a#2&quot;</span><span class="p">:</span> <span class="mi">117</span><span class="p">,</span> <span class="s2">&quot;bb2&quot;</span><span class="p">:</span> <span class="mi">117</span><span class="p">,</span> <span class="s2">&quot;b2&quot;</span><span class="p">:</span> <span class="mi">123</span><span class="p">,</span>
+    <span class="c1"># 옥타브 3</span>
+    <span class="s2">&quot;c3&quot;</span><span class="p">:</span> <span class="mi">131</span><span class="p">,</span> <span class="s2">&quot;c#3&quot;</span><span class="p">:</span> <span class="mi">139</span><span class="p">,</span> <span class="s2">&quot;db3&quot;</span><span class="p">:</span> <span class="mi">139</span><span class="p">,</span> <span class="s2">&quot;d3&quot;</span><span class="p">:</span> <span class="mi">147</span><span class="p">,</span> <span class="s2">&quot;d#3&quot;</span><span class="p">:</span> <span class="mi">156</span><span class="p">,</span> <span class="s2">&quot;eb3&quot;</span><span class="p">:</span> <span class="mi">156</span><span class="p">,</span>
+    <span class="s2">&quot;e3&quot;</span><span class="p">:</span> <span class="mi">165</span><span class="p">,</span> <span class="s2">&quot;f3&quot;</span><span class="p">:</span> <span class="mi">175</span><span class="p">,</span> <span class="s2">&quot;f#3&quot;</span><span class="p">:</span> <span class="mi">185</span><span class="p">,</span> <span class="s2">&quot;gb3&quot;</span><span class="p">:</span> <span class="mi">185</span><span class="p">,</span> <span class="s2">&quot;g3&quot;</span><span class="p">:</span> <span class="mi">196</span><span class="p">,</span> <span class="s2">&quot;g#3&quot;</span><span class="p">:</span> <span class="mi">208</span><span class="p">,</span> <span class="s2">&quot;ab3&quot;</span><span class="p">:</span> <span class="mi">208</span><span class="p">,</span>
+    <span class="s2">&quot;a3&quot;</span><span class="p">:</span> <span class="mi">220</span><span class="p">,</span> <span class="s2">&quot;a#3&quot;</span><span class="p">:</span> <span class="mi">233</span><span class="p">,</span> <span class="s2">&quot;bb3&quot;</span><span class="p">:</span> <span class="mi">233</span><span class="p">,</span> <span class="s2">&quot;b3&quot;</span><span class="p">:</span> <span class="mi">247</span><span class="p">,</span>
+    <span class="c1"># 옥타브 4 (중간 옥타브)</span>
+    <span class="s2">&quot;c4&quot;</span><span class="p">:</span> <span class="mi">262</span><span class="p">,</span> <span class="s2">&quot;c#4&quot;</span><span class="p">:</span> <span class="mi">277</span><span class="p">,</span> <span class="s2">&quot;db4&quot;</span><span class="p">:</span> <span class="mi">277</span><span class="p">,</span> <span class="s2">&quot;d4&quot;</span><span class="p">:</span> <span class="mi">294</span><span class="p">,</span> <span class="s2">&quot;d#4&quot;</span><span class="p">:</span> <span class="mi">311</span><span class="p">,</span> <span class="s2">&quot;eb4&quot;</span><span class="p">:</span> <span class="mi">311</span><span class="p">,</span>
+    <span class="s2">&quot;e4&quot;</span><span class="p">:</span> <span class="mi">330</span><span class="p">,</span> <span class="s2">&quot;f4&quot;</span><span class="p">:</span> <span class="mi">349</span><span class="p">,</span> <span class="s2">&quot;f#4&quot;</span><span class="p">:</span> <span class="mi">370</span><span class="p">,</span> <span class="s2">&quot;gb4&quot;</span><span class="p">:</span> <span class="mi">370</span><span class="p">,</span> <span class="s2">&quot;g4&quot;</span><span class="p">:</span> <span class="mi">392</span><span class="p">,</span> <span class="s2">&quot;g#4&quot;</span><span class="p">:</span> <span class="mi">415</span><span class="p">,</span> <span class="s2">&quot;ab4&quot;</span><span class="p">:</span> <span class="mi">415</span><span class="p">,</span>
+    <span class="s2">&quot;a4&quot;</span><span class="p">:</span> <span class="mi">440</span><span class="p">,</span> <span class="s2">&quot;a#4&quot;</span><span class="p">:</span> <span class="mi">466</span><span class="p">,</span> <span class="s2">&quot;bb4&quot;</span><span class="p">:</span> <span class="mi">466</span><span class="p">,</span> <span class="s2">&quot;b4&quot;</span><span class="p">:</span> <span class="mi">494</span><span class="p">,</span>
+    <span class="c1"># 옥타브 5</span>
+    <span class="s2">&quot;c5&quot;</span><span class="p">:</span> <span class="mi">523</span><span class="p">,</span> <span class="s2">&quot;c#5&quot;</span><span class="p">:</span> <span class="mi">554</span><span class="p">,</span> <span class="s2">&quot;db5&quot;</span><span class="p">:</span> <span class="mi">554</span><span class="p">,</span> <span class="s2">&quot;d5&quot;</span><span class="p">:</span> <span class="mi">587</span><span class="p">,</span> <span class="s2">&quot;d#5&quot;</span><span class="p">:</span> <span class="mi">622</span><span class="p">,</span> <span class="s2">&quot;eb5&quot;</span><span class="p">:</span> <span class="mi">622</span><span class="p">,</span>
+    <span class="s2">&quot;e5&quot;</span><span class="p">:</span> <span class="mi">659</span><span class="p">,</span> <span class="s2">&quot;f5&quot;</span><span class="p">:</span> <span class="mi">698</span><span class="p">,</span> <span class="s2">&quot;f#5&quot;</span><span class="p">:</span> <span class="mi">740</span><span class="p">,</span> <span class="s2">&quot;gb5&quot;</span><span class="p">:</span> <span class="mi">740</span><span class="p">,</span> <span class="s2">&quot;g5&quot;</span><span class="p">:</span> <span class="mi">784</span><span class="p">,</span> <span class="s2">&quot;g#5&quot;</span><span class="p">:</span> <span class="mi">831</span><span class="p">,</span> <span class="s2">&quot;ab5&quot;</span><span class="p">:</span> <span class="mi">831</span><span class="p">,</span>
+    <span class="s2">&quot;a5&quot;</span><span class="p">:</span> <span class="mi">880</span><span class="p">,</span> <span class="s2">&quot;a#5&quot;</span><span class="p">:</span> <span class="mi">932</span><span class="p">,</span> <span class="s2">&quot;bb5&quot;</span><span class="p">:</span> <span class="mi">932</span><span class="p">,</span> <span class="s2">&quot;b5&quot;</span><span class="p">:</span> <span class="mi">988</span><span class="p">,</span>
+    <span class="c1"># 옥타브 6</span>
+    <span class="s2">&quot;c6&quot;</span><span class="p">:</span> <span class="mi">1047</span><span class="p">,</span> <span class="s2">&quot;c#6&quot;</span><span class="p">:</span> <span class="mi">1109</span><span class="p">,</span> <span class="s2">&quot;db6&quot;</span><span class="p">:</span> <span class="mi">1109</span><span class="p">,</span> <span class="s2">&quot;d6&quot;</span><span class="p">:</span> <span class="mi">1175</span><span class="p">,</span> <span class="s2">&quot;d#6&quot;</span><span class="p">:</span> <span class="mi">1245</span><span class="p">,</span> <span class="s2">&quot;eb6&quot;</span><span class="p">:</span> <span class="mi">1245</span><span class="p">,</span>
+    <span class="s2">&quot;e6&quot;</span><span class="p">:</span> <span class="mi">1319</span><span class="p">,</span> <span class="s2">&quot;f6&quot;</span><span class="p">:</span> <span class="mi">1397</span><span class="p">,</span> <span class="s2">&quot;f#6&quot;</span><span class="p">:</span> <span class="mi">1480</span><span class="p">,</span> <span class="s2">&quot;gb6&quot;</span><span class="p">:</span> <span class="mi">1480</span><span class="p">,</span> <span class="s2">&quot;g6&quot;</span><span class="p">:</span> <span class="mi">1568</span><span class="p">,</span> <span class="s2">&quot;g#6&quot;</span><span class="p">:</span> <span class="mi">1661</span><span class="p">,</span> <span class="s2">&quot;ab6&quot;</span><span class="p">:</span> <span class="mi">1661</span><span class="p">,</span>
+    <span class="s2">&quot;a6&quot;</span><span class="p">:</span> <span class="mi">1760</span><span class="p">,</span> <span class="s2">&quot;a#6&quot;</span><span class="p">:</span> <span class="mi">1865</span><span class="p">,</span> <span class="s2">&quot;bb6&quot;</span><span class="p">:</span> <span class="mi">1865</span><span class="p">,</span> <span class="s2">&quot;b6&quot;</span><span class="p">:</span> <span class="mi">1976</span><span class="p">,</span>
+    <span class="c1"># 옥타브 7</span>
+    <span class="s2">&quot;c7&quot;</span><span class="p">:</span> <span class="mi">2093</span><span class="p">,</span> <span class="s2">&quot;c#7&quot;</span><span class="p">:</span> <span class="mi">2217</span><span class="p">,</span> <span class="s2">&quot;db7&quot;</span><span class="p">:</span> <span class="mi">2217</span><span class="p">,</span> <span class="s2">&quot;d7&quot;</span><span class="p">:</span> <span class="mi">2349</span><span class="p">,</span> <span class="s2">&quot;d#7&quot;</span><span class="p">:</span> <span class="mi">2489</span><span class="p">,</span> <span class="s2">&quot;eb7&quot;</span><span class="p">:</span> <span class="mi">2489</span><span class="p">,</span>
+    <span class="s2">&quot;e7&quot;</span><span class="p">:</span> <span class="mi">2637</span><span class="p">,</span> <span class="s2">&quot;f7&quot;</span><span class="p">:</span> <span class="mi">2794</span><span class="p">,</span> <span class="s2">&quot;f#7&quot;</span><span class="p">:</span> <span class="mi">2960</span><span class="p">,</span> <span class="s2">&quot;gb7&quot;</span><span class="p">:</span> <span class="mi">2960</span><span class="p">,</span> <span class="s2">&quot;g7&quot;</span><span class="p">:</span> <span class="mi">3136</span><span class="p">,</span> <span class="s2">&quot;g#7&quot;</span><span class="p">:</span> <span class="mi">3322</span><span class="p">,</span> <span class="s2">&quot;ab7&quot;</span><span class="p">:</span> <span class="mi">3322</span><span class="p">,</span>
+    <span class="s2">&quot;a7&quot;</span><span class="p">:</span> <span class="mi">3520</span><span class="p">,</span> <span class="s2">&quot;a#7&quot;</span><span class="p">:</span> <span class="mi">3729</span><span class="p">,</span> <span class="s2">&quot;bb7&quot;</span><span class="p">:</span> <span class="mi">3729</span><span class="p">,</span> <span class="s2">&quot;b7&quot;</span><span class="p">:</span> <span class="mi">3951</span><span class="p">,</span>
+    <span class="c1"># 옥타브 8</span>
+    <span class="s2">&quot;c8&quot;</span><span class="p">:</span> <span class="mi">4186</span><span class="p">,</span> <span class="s2">&quot;c#8&quot;</span><span class="p">:</span> <span class="mi">4435</span><span class="p">,</span> <span class="s2">&quot;db8&quot;</span><span class="p">:</span> <span class="mi">4435</span><span class="p">,</span> <span class="s2">&quot;d8&quot;</span><span class="p">:</span> <span class="mi">4699</span><span class="p">,</span> <span class="s2">&quot;d#8&quot;</span><span class="p">:</span> <span class="mi">4978</span><span class="p">,</span> <span class="s2">&quot;eb8&quot;</span><span class="p">:</span> <span class="mi">4978</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># 자주 사용되는 음계별 별칭 추가</span>
+<span class="n">_NOTES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># 도레미파솔라시도 (C major scale)</span>
+    <span class="s2">&quot;do&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;c4&quot;</span><span class="p">],</span>    <span class="c1"># 도</span>
+    <span class="s2">&quot;re&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;d4&quot;</span><span class="p">],</span>    <span class="c1"># 레  </span>
+    <span class="s2">&quot;mi&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;e4&quot;</span><span class="p">],</span>    <span class="c1"># 미</span>
+    <span class="s2">&quot;fa&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;f4&quot;</span><span class="p">],</span>    <span class="c1"># 파</span>
+    <span class="s2">&quot;sol&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;g4&quot;</span><span class="p">],</span>   <span class="c1"># 솔</span>
+    <span class="s2">&quot;la&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;a4&quot;</span><span class="p">],</span>    <span class="c1"># 라</span>
+    <span class="s2">&quot;si&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;b4&quot;</span><span class="p">],</span>    <span class="c1"># 시</span>
+    <span class="c1"># 영어식 음명 (4옥타브 기준)</span>
+    <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;c4&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;d4&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;e&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;e4&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;f4&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;g&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;g4&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;a4&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="s2">&quot;b4&quot;</span><span class="p">],</span>
+<span class="p">}</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_HanaCommon</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A mixin class providing common hardware control methods for a Chaino Hana board.</span>
+<span class="sd">    This class is not intended to be instantiated directly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">HIGH</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">LOW</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="n">INPUT</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">OUTPUT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">INPUT_PULLUP</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">INPUT_PULLDOWN</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_pin_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Configures the specified pin to behave either as an input or an output.</span>
+<span class="sd">        This is equivalent to Arduino&#39;s ``pinMode()``.</span>
+
+<span class="sd">        :param pin: The number of the pin whose mode you wish to set.</span>
+<span class="sd">        :type pin: int</span>
+<span class="sd">        :param mode: The mode for the pin. Can be :attr:`INPUT`, :attr:`OUTPUT`,</span>
+<span class="sd">                     :attr:`INPUT_PULLUP`, or :attr:`INPUT_PULLDOWN`.</span>
+<span class="sd">        :type mode: int</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # Set pin 13 as an output for an LED</span>
+<span class="sd">            hana.set_pin_mode(13, hana.OUTPUT)</span>
+<span class="sd">            </span>
+<span class="sd">            # Set pin 2 as an input with a pull-up for a button</span>
+<span class="sd">            hana.set_pin_mode(2, hana.INPUT_PULLUP)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_digital</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the value from a specified digital pin.</span>
+<span class="sd">        This is equivalent to Arduino&#39;s ``digitalRead()``.</span>
+
+<span class="sd">        :param pin: The number of the digital pin you want to read.</span>
+<span class="sd">        :type pin: int</span>
+<span class="sd">        :return: The state of the pin, either :attr:`HIGH` (1) or :attr:`LOW` (0).</span>
+<span class="sd">        :rtype: int</span>
+
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">        </span>
+<span class="sd">            button_state = hana.read_digital(2)</span>
+<span class="sd">            if button_state == hana.LOW:</span>
+<span class="sd">                print(&quot;Button is pressed!&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="n">pin</span><span class="p">))</span>
+    
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_digital</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a HIGH or a LOW value to a digital pin.</span>
+<span class="sd">        This is equivalent to Arduino&#39;s ``digitalWrite()``.</span>
+
+<span class="sd">        :param pin: The number of the pin to write to.</span>
+<span class="sd">        :type pin: int</span>
+<span class="sd">        :param status: The value to write, either :attr:`HIGH` or :attr:`LOW`.</span>
+<span class="sd">        :type status: int</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # Turn an LED on</span>
+<span class="sd">            hana.write_digital(13, hana.HIGH)</span>
+<span class="sd">            time.sleep(1)</span>
+<span class="sd">            # Turn the LED off</span>
+<span class="sd">            hana.write_digital(13, hana.LOW)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_analog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads the value from the specified analog pin.</span>
+<span class="sd">        This is equivalent to Arduino&#39;s ``analogRead()``.</span>
+
+<span class="sd">        :param pin: The number of the analog input pin to read from (e.g., 26~29 on RP2040).</span>
+<span class="sd">        :type pin: int</span>
+<span class="sd">        :return: The analog reading on the pin. The range depends on the ADC</span>
+<span class="sd">                 resolution (e.g., 0-1023 for 10-bit, 0-4095 for 12-bit).</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        :seealso: :meth:`set_adc_bits` to change the reading resolution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="n">pin</span><span class="p">))</span>
+    
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_adc_bits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bits</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the resolution for :meth:`read_analog`.</span>
+<span class="sd">        This is equivalent to ``analogReadResolution()`` on supported boards.</span>
+
+<span class="sd">        :param bits: The desired resolution in bits. Common values are 10 (for a</span>
+<span class="sd">                     range of 0-1023) or 12 (for a range of 0-4095).</span>
+<span class="sd">        :type bits: int</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # Set ADC to 12-bit resolution for more precision</span>
+<span class="sd">            hana.set_adc_bits(12)</span>
+<span class="sd">            high_res_value = hana.read_analog(26) # Returns a value between 0 and 4095</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">bits</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_analog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">duty</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes an analog value (PWM wave) to a pin.</span>
+<span class="sd">        This is equivalent to Arduino&#39;s ``analogWrite()``.</span>
+
+<span class="sd">        :param pin: The pin to write to.</span>
+<span class="sd">        :type pin: int</span>
+<span class="sd">        :param duty: The duty cycle for the PWM signal. The value should be between</span>
+<span class="sd">                     0 (always off) and the maximum range (default is 255).</span>
+<span class="sd">        :type duty: int</span>
+<span class="sd">        :seealso: :meth:`set_pwm_freq`, :meth:`set_pwm_range`</span>
+<span class="sd">        </span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # Fade an LED to half brightness</span>
+<span class="sd">            hana.write_analog(9, 128)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">duty</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_pwm_freq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="n">freq</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the frequency for PWM signals generated by :meth:`write_analog`.</span>
+<span class="sd">        This is equivalent to ``analogWriteFreq()`` on supported boards.</span>
+
+<span class="sd">        :param freq: The desired frequency in Hertz (Hz).</span>
+<span class="sd">        :type freq: int</span>
+<span class="sd">        </span>
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">        </span>
+<span class="sd">            # Set PWM frequency to 1 kHz for smoother LED fading</span>
+<span class="sd">            hana.set_pwm_freq(1000)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">22</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_pwm_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwm_range</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the range for the duty cycle used in :meth:`write_analog`.</span>
+<span class="sd">        This is equivalent to ``analogWriteRange()`` on supported boards.</span>
+
+<span class="sd">        :param pwm_range: The maximum value for the duty cycle, which defines the</span>
+<span class="sd">                          PWM resolution (e.g., 255 for 8-bit, 1023 for 10-bit).</span>
+<span class="sd">        :type pwm_range: int</span>
+<span class="sd">        </span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # Set PWM range for 10-bit resolution</span>
+<span class="sd">            hana.set_pwm_range(1023)</span>
+<span class="sd">            # Now set LED to 50% brightness with the new range</span>
+<span class="sd">            hana.write_analog(9, 512)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="n">pwm_range</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_millis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span> <span class="c1">#&quot;&quot;&quot;현재 밀리초 단위 시간 반환&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of milliseconds passed since the board began running.</span>
+<span class="sd">        This is equivalent to Arduino&#39;s ``millis()``.</span>
+
+<span class="sd">        :return: The number of milliseconds as an integer.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        :note: This number will overflow (go back to zero) after approximately 50 days.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">31</span><span class="p">))</span>
+<span class="w">    </span>
+
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    def get_micros(self) -&gt; int:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of microseconds passed since the board began running.</span>
+<span class="sd">        This is equivalent to Arduino&#39;s ``micros()``.</span>
+
+<span class="sd">        :return: The number of microseconds as an integer.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        :note: This number will overflow (go back to zero) after approximately 70 minutes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        return int(self.exec_func(32))</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+    <span class="c1"># 음 발생 관련 함수들</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_tone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a square wave tone on a pin.</span>
+<span class="sd">        This is equivalent to Arduino&#39;s ``tone()``.</span>
+
+<span class="sd">        :param pin: The pin on which to generate the tone.</span>
+<span class="sd">        :type pin: int</span>
+<span class="sd">        :param freq: The frequency of the tone in Hertz, or a string representing a</span>
+<span class="sd">                     musical note (e.g., &#39;c4&#39;, &#39;a#5&#39;, &#39;db3&#39;).</span>
+<span class="sd">        :type freq: int | str</span>
+<span class="sd">        :param duration: The duration of the tone in milliseconds. If 0 (default),</span>
+<span class="sd">                         the tone plays continuously until :meth:`stop_tone` is called.</span>
+<span class="sd">        :type duration: int</span>
+<span class="sd">        :raises ValueError: If an unrecognized note string is provided.</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            # Play a 440 Hz &#39;A&#39; note for 1 second</span>
+<span class="sd">            hana.start_tone(8, 440, 1000)</span>
+
+<span class="sd">            # Play a &#39;C4&#39; note continuously</span>
+<span class="sd">            hana.start_tone(8, &#39;c4&#39;)</span>
+<span class="sd">            time.sleep(2)</span>
+<span class="sd">            hana.stop_tone(8)</span>
+<span class="sd">            </span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            &gt;&gt;&gt; # Direct frequency specification</span>
+<span class="sd">            &gt;&gt;&gt; from chaino import Hana</span>
+<span class="sd">            &gt;&gt;&gt; import time</span>
+<span class="sd">            &gt;&gt;&gt; hana = Hana(&quot;COM9&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; hana.start_tone(8, 440, 1000)  # 440Hz on pin 8 for 1 second</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; # Note name specification  </span>
+<span class="sd">            &gt;&gt;&gt; hana.start_tone(8, &#39;a4&#39;, 1000)   # A4 (440Hz) on pin 8 for 1 second</span>
+<span class="sd">            &gt;&gt;&gt; hana.start_tone(8, &#39;c#5&#39;, 500)   # C#5 on pin 8 for 0.5 seconds</span>
+<span class="sd">            &gt;&gt;&gt; hana.start_tone(8, &#39;do&#39;)         # Do note on pin 8 infinitely</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; # Simple melody</span>
+<span class="sd">            &gt;&gt;&gt; melody = [&#39;do&#39;, &#39;re&#39;, &#39;mi&#39;, &#39;fa&#39;, &#39;sol&#39;]</span>
+<span class="sd">            &gt;&gt;&gt; for note in melody:</span>
+<span class="sd">            ...     hana.start_tone(8, note, 400)</span>
+<span class="sd">            ...     time.sleep(0.5)</span>
+<span class="sd">        </span>
+<span class="sd">        :note: Case insensitive</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">freq_lower</span> <span class="o">=</span> <span class="n">freq</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">freq_lower</span> <span class="ow">in</span> <span class="n">_PITCHES</span><span class="p">:</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">_PITCHES</span><span class="p">[</span><span class="n">freq_lower</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">freq_lower</span> <span class="ow">in</span> <span class="n">_NOTES</span><span class="p">:</span> <span class="n">freq</span> <span class="o">=</span> <span class="n">_NOTES</span><span class="p">[</span><span class="n">freq_lower</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown note: </span><span class="si">{</span><span class="n">freq</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop_tone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Stops the tone being generated on a pin.</span>
+<span class="sd">        This is equivalent to Arduino&#39;s ``noTone()``.</span>
+
+<span class="sd">        :param pin: The pin on which to stop the tone.</span>
+<span class="sd">        :type pin: int</span>
+<span class="sd">        </span>
+<span class="sd">        .. code-block:: python</span>
+<span class="sd">        </span>
+<span class="sd">            &gt;&gt;&gt; # Start tone</span>
+<span class="sd">            &gt;&gt;&gt; hana.start_tone(8, &#39;a4&#39;)  # Play A4 note on pin 8 infinitely</span>
+<span class="sd">            &gt;&gt;&gt; </span>
+<span class="sd">            &gt;&gt;&gt; # Do other work...</span>
+<span class="sd">            &gt;&gt;&gt; time.sleep(2)    # Wait 2 seconds</span>
+<span class="sd">            &gt;&gt;&gt; </span>
+<span class="sd">            &gt;&gt;&gt; # Stop tone</span>
+<span class="sd">            &gt;&gt;&gt; hana.stop_tone(8)     # Stop tone generation on pin 8</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; # Create silence between notes in melody</span>
+<span class="sd">            &gt;&gt;&gt; hana.start_tone(8, &#39;c4&#39;, 500)   # Do note for 0.5 seconds</span>
+<span class="sd">            &gt;&gt;&gt; hana.stop_tone(8)           # Stop immediately</span>
+<span class="sd">            &gt;&gt;&gt; time.sleep(1.5)           # 1.5 second silence</span>
+<span class="sd">            &gt;&gt;&gt; hana.start_tone(8, &#39;d4&#39;, 500)   # Re note for 0.5 seconds</span>
+<span class="sd">        </span>
+<span class="sd">        :note:</span>
+<span class="sd">            - Only needed when start_tone() method&#39;s duration parameter is 0.</span>
+<span class="sd">            - When duration is specified, tone stops automatically, stop_tone() is unnecessary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">pin</span><span class="p">)</span>
+
+
+
+<span class="c1">#=============================================================================================</span>
+<span class="n">IS_CPYTHON</span> <span class="o">=</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">implementation</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;cpython&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">IS_CPYTHON</span><span class="p">:</span>
+    
+    <span class="k">class</span><span class="w"> </span><span class="nc">Hana</span><span class="p">(</span><span class="n">_HanaCommon</span><span class="p">,</span> <span class="n">Chaino</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A high-level interface for controlling a Chaino_Hana board from CPython.</span>
+
+<span class="sd">        This class combines the serial communication capabilities of :class:`~chaino.Chaino`</span>
+<span class="sd">        with the Arduino-like hardware control methods specific to the Chaino_Hana board.</span>
+
+<span class="sd">        :param port: The name of the serial port (e.g., &quot;COM9&quot;).</span>
+<span class="sd">        :type port: str</span>
+<span class="sd">        :param i2c_addr: The I2C address of the target Chaino_Hana board. If 0 (default),</span>
+<span class="sd">                         commands are sent to the master device connected via serial.</span>
+<span class="sd">        :type i2c_addr: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">Chaino</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="p">)</span>
+            
+<span class="k">else</span><span class="p">:</span>
+    
+<div class="viewcode-block" id="Hana">
+<a class="viewcode-back" href="../../chaino.html#chaino.hana.Hana">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Hana</span><span class="p">(</span><span class="n">_HanaCommon</span><span class="p">,</span> <span class="n">Chaino</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A high-level interface for controlling a Chaino Hana board from MicroPython.</span>
+
+<span class="sd">        This class combines the I2C communication capabilities of :class:`~chaino.Chaino`</span>
+<span class="sd">        with the Arduino-like hardware control methods specific to the Chaino_Hana board.</span>
+
+<span class="sd">        :param i2c_addr: The I2C address of the target Chaino_Hana slave board.</span>
+<span class="sd">        :type i2c_addr: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Hana.__init__">
+<a class="viewcode-back" href="../../chaino.html#chaino.hana.Hana.__init__">[docs]</a>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="c1"># MicroPython용 Chaino는 (slave_addr)만 받는다고 가정</span>
+            <span class="n">Chaino</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="p">)</span></div>
+</div>
+
+
+
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="n">Hana</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">who</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">get_version</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">get_addr</span><span class="p">())</span>
+    <span class="c1">#for _ in range(10000): print(h.read_analog(26))</span>
+    <span class="n">h</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jang-Hyun Park.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
