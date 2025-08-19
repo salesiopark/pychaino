@@ -15,6 +15,9 @@ wheels/
 .eggs/
 pip-wheel-metadata/
 
+
+
+docs/_build/
 # -------------------------------
 # Virtual envs
 # -------------------------------

@@ -38,8 +38,14 @@ jobs:
     - name: Build documentation
       run: |
         cd docs
-        sphinx-apidoc -o . ../src/chaino --force
-        make html
+        # _static 디렉토리 생성
+        mkdir -p _static
+        # API 문서 자동 생성
+        sphinx-apidoc -f -M -o . ../src/chaino
+        # 기존 index.rst 백업 후 복원 (중복 방지)
+        cp index.rst index_backup.rst
+        # HTML 문서 빌드
+        sphinx-build -b html . _build/html
         
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3

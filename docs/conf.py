@@ -14,7 +14,7 @@ extensions = [
 ]
 
 html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_static_path = []
 
 # autodoc 설정 강화
 autodoc_default_options = {
@@ -23,6 +23,7 @@ autodoc_default_options = {
     'special-members': '__init__',
     'undoc-members': True,
     'show-inheritance': True,
+    'inherited-members': True,  # 상속된 메서드도 포함
     'exclude-members': '__weakref__'
 }
 
