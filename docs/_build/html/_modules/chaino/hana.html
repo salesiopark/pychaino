@@ -39,8 +39,11 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <p class="caption" role="heading"><span class="caption-text">API Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">chaino</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -402,6 +405,7 @@
 <span class="sd">            hana.stop_tone(8)</span>
 <span class="sd">            </span>
 <span class="sd">        .. code-block:: python</span>
+
 <span class="sd">            &gt;&gt;&gt; # Direct frequency specification</span>
 <span class="sd">            &gt;&gt;&gt; from chaino import Hana</span>
 <span class="sd">            &gt;&gt;&gt; import time</span>
@@ -440,6 +444,7 @@
 <span class="sd">        :type pin: int</span>
 <span class="sd">        </span>
 <span class="sd">        .. code-block:: python</span>
+<span class="sd">        </span>
 <span class="sd">            &gt;&gt;&gt; # Start tone</span>
 <span class="sd">            &gt;&gt;&gt; hana.start_tone(8, &#39;a4&#39;)  # Play A4 note on pin 8 infinitely</span>
 <span class="sd">            &gt;&gt;&gt; </span>
@@ -487,7 +492,7 @@
 <span class="k">else</span><span class="p">:</span>
     
 <div class="viewcode-block" id="Hana">
-<a class="viewcode-back" href="../../index.html#chaino.hana.Hana">[docs]</a>
+<a class="viewcode-back" href="../../chaino.html#chaino.hana.Hana">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">Hana</span><span class="p">(</span><span class="n">_HanaCommon</span><span class="p">,</span> <span class="n">Chaino</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A high-level interface for controlling a Chaino Hana board from MicroPython.</span>
@@ -499,7 +504,7 @@
 <span class="sd">        :type i2c_addr: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Hana.__init__">
-<a class="viewcode-back" href="../../index.html#chaino.hana.Hana.__init__">[docs]</a>
+<a class="viewcode-back" href="../../chaino.html#chaino.hana.Hana.__init__">[docs]</a>
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
             <span class="c1"># MicroPython용 Chaino는 (slave_addr)만 받는다고 가정</span>
             <span class="n">Chaino</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="p">)</span></div>
