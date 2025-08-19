@@ -1,17 +1,31 @@
-Welcome to Your Package documentation!
-=====================================
+Welcome to chaino documentation!
+================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   chaino_module
+   hana_module
 
 API Reference
 =============
 
-.. automodule:: chaino
+Core Module
+-----------
+
+.. automodule:: chaino.chaino
    :members:
+   :undoc-members:
+   :show-inheritance:
+
+Hana Module  
+-----------
+
+.. automodule:: chaino.hana
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 Indices and tables
 ==================
