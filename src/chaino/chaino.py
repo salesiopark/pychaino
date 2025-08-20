@@ -1,7 +1,7 @@
 #2025/07/15 : 최초 버전 작성
 """
-Chaino Protocol Client Library
-==============================
+Core class of chaino Protocol Package
+======================================
 
 This module provides the Python client-side implementation for the Chaino protocol,
 allowing communication with Chaino-enabled Arduino devices. It supports both standard
@@ -82,11 +82,17 @@ else: # Micropython에서는 binascii라이브러리에 crc_hqx가 없으므로 
 C/C++로 구현된 코드도 쉽게 찾을 수 있고 검증도 용이하다.
 '''
 def gen_CRC16_XMODEM(payload: bytes) -> bytes:
+    """
+    :exclude-from-docs:
+    """
     return crc_hqx(payload, 0).to_bytes(2, 'big')
 
 
 #진리값만 "1"/"0"으로 만들고 나머지는 그대로 str로 변환
 def map_args(x):
+    """
+    :exclude-from-docs:
+    """
     return "1" if x is True else "0" if x is False else str(x)        
 
 
@@ -95,6 +101,9 @@ def map_args(x):
 따라서 첫 두 바이트(crc16)를 분리하고 나머지로 crc를 계산하여 비교
 """
 def is_crc_matched(packet: bytes) -> bool:
+    """
+    :exclude-from-docs:
+    """
     if len(packet) <= 2: return False #적어도 crc16+header 3바이트는 되어야 함
     received_crc = int.from_bytes(packet[:2], 'big')
     computed_crc = crc_hqx(packet[2:], 0)
@@ -110,6 +119,9 @@ RP2040의 함수실행 요구 패킷 생성. 첫 2byts이후는 ASCII문자열. 
     FN (func_num) : 한 자리(혹은 두 자리) 16진수 - 아두이노에서 최대 200개까지 등록
 """
 def gen_exec_func_packet(i2c_addr: int, func_num: int, *args) -> bytes:
+    """
+    :exclude-from-docs:
+    """
     # 1) map_args에서 True는 "1"로 False는 "0"으로 교체한 후 패킷 생성
     if i2c_addr == -1:  # micropython에서 호출한 경우
         parts = [f"{func_num:x}"]
@@ -124,23 +136,38 @@ def gen_exec_func_packet(i2c_addr: int, func_num: int, *args) -> bytes:
 
 
 def str_packet(packet: bytes):
+    """
+    :exclude-from-docs:
+    """
     str_crc16, bytes_data = f"<[0x{packet[:2].hex()}]", packet[2:]
     replaced = bytes_data.replace(bRS, b'{RS}').replace(bEOT, b'{EOT}')
     return str_crc16 + str(replaced)[2:-1] + f">:{len(packet)} bytes"
 
 
 def print_err(msg: str, end:str = "\n"): #RED text
+    """
+    :exclude-from-docs:
+    """
     print("\033[31mError : " + msg + "\033[0m", end=end)
 
 
 def print_err2(msg: str, end:str = "\n"): #BLUE text
+    """
+    :exclude-from-docs:
+    """
     print("\033[34mError : " + msg + "\033[0m", end=end)
 
 def print_red(msg: str, end:str = "\n"): #RED text
+    """
+    :exclude-from-docs:
+    """
     print("\033[31m" + msg + "\033[0m", end=end)
 
 
 def print_yellow(msg: str, end:str = "\n"): #BLUE text
+    """
+    :exclude-from-docs:
+    """
     print("\033[33m" + msg + "\033[0m", end=end)
 
 ########################################################################

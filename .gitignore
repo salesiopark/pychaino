@@ -15,9 +15,6 @@ wheels/
 .eggs/
 pip-wheel-metadata/
 
-
-
-docs/_build/
 # -------------------------------
 # Virtual envs
 # -------------------------------
@@ -75,3 +72,4 @@ Thumbs.db
 _release_to_pypi.bat
 # Ignore ONLY the ".legacy" folder
 .legacy/
+docs/_build/

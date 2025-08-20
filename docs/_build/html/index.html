@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="chaino" href="modules.html" /> 
+    <link rel="next" title="Chaino Class" href="api/chaino.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -41,9 +41,10 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">API Documentation:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">chaino</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/chaino.html">Chaino Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/hana.html">Hana Class</a></li>
 </ul>
 
         </div>
@@ -74,13 +75,27 @@
 <h1>Welcome to chaino documentation!<a class="headerlink" href="#welcome-to-chaino-documentation" title="Link to this heading"></a></h1>
 <p><strong>chaino</strong> is a Python and MicroPython Host Library for controlling Chaino (Arduino) Devices.</p>
 <div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">API Documentation:</span></p>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">chaino</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="chaino.html">chaino package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/chaino.html">Chaino Class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/chaino.html#core-class-of-chaino-protocol-package">Core class of chaino Protocol Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/chaino.html#chaino.chaino.Chaino"><code class="docutils literal notranslate"><span class="pre">Chaino</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/hana.html">Hana Class</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/hana.html#class-for-controlling-chaino-hana-board">class for controlling Chaino_Hana Board</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/hana.html#chaino.hana.Hana"><code class="docutils literal notranslate"><span class="pre">Hana</span></code></a></li>
 </ul>
 </li>
 </ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>CPython Prerequisite</strong></p>
+<p>When using <code class="docutils literal notranslate"><span class="pre">chaino</span></code> with CPython, the <code class="docutils literal notranslate"><span class="pre">pyserial</span></code> library is required for serial communication. Please install it separately.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pyserial
+</pre></div>
+</div>
 </div>
 </section>
 <section id="quick-start">
@@ -125,7 +140,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="modules.html" class="btn btn-neutral float-right" title="chaino" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="api/chaino.html" class="btn btn-neutral float-right" title="Chaino Class" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

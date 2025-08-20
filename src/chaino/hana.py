@@ -1,13 +1,13 @@
 """
-Chaino Hana Board Control Library
-=================================
+class for controlling Chaino_Hana Board
+=======================================
 
 This module provides a high-level, Pythonic interface for controlling a
 Chaino_Hana board. It abstracts the underlying function calls into
 an intuitive, Arduino-like API.
 
 The primary class, :class:`Hana`, inherits all the base communication features
-from :class:`chaino.Chaino` and adds specific methods for hardware manipulation
+from :class:`~chaino.chaino.Chaino` and adds specific methods for hardware manipulation
 like GPIO, ADC, PWM, and tone generation.
 
 CPython Usage:
@@ -56,43 +56,42 @@ except ImportError:
 
 
 _PITCHES = {
-    # 옥타브 0
     "b0": 31,
-    # 옥타브 1
+
     "c1": 33, "c#1": 35, "db1": 35, "d1": 37, "d#1": 39, "eb1": 39,
     "e1": 41, "f1": 44, "f#1": 46, "gb1": 46, "g1": 49, "g#1": 52, "ab1": 52,
     "a1": 55, "a#1": 58, "bb1": 58, "b1": 62,
-    # 옥타브 2
+
     "c2": 65, "c#2": 69, "db2": 69, "d2": 73, "d#2": 78, "eb2": 78,
     "e2": 82, "f2": 87, "f#2": 93, "gb2": 93, "g2": 98, "g#2": 104, "ab2": 104,
     "a2": 110, "a#2": 117, "bb2": 117, "b2": 123,
-    # 옥타브 3
+
     "c3": 131, "c#3": 139, "db3": 139, "d3": 147, "d#3": 156, "eb3": 156,
     "e3": 165, "f3": 175, "f#3": 185, "gb3": 185, "g3": 196, "g#3": 208, "ab3": 208,
     "a3": 220, "a#3": 233, "bb3": 233, "b3": 247,
-    # 옥타브 4 (중간 옥타브)
+
     "c4": 262, "c#4": 277, "db4": 277, "d4": 294, "d#4": 311, "eb4": 311,
     "e4": 330, "f4": 349, "f#4": 370, "gb4": 370, "g4": 392, "g#4": 415, "ab4": 415,
     "a4": 440, "a#4": 466, "bb4": 466, "b4": 494,
-    # 옥타브 5
+
     "c5": 523, "c#5": 554, "db5": 554, "d5": 587, "d#5": 622, "eb5": 622,
     "e5": 659, "f5": 698, "f#5": 740, "gb5": 740, "g5": 784, "g#5": 831, "ab5": 831,
     "a5": 880, "a#5": 932, "bb5": 932, "b5": 988,
-    # 옥타브 6
+
     "c6": 1047, "c#6": 1109, "db6": 1109, "d6": 1175, "d#6": 1245, "eb6": 1245,
     "e6": 1319, "f6": 1397, "f#6": 1480, "gb6": 1480, "g6": 1568, "g#6": 1661, "ab6": 1661,
     "a6": 1760, "a#6": 1865, "bb6": 1865, "b6": 1976,
-    # 옥타브 7
+
     "c7": 2093, "c#7": 2217, "db7": 2217, "d7": 2349, "d#7": 2489, "eb7": 2489,
     "e7": 2637, "f7": 2794, "f#7": 2960, "gb7": 2960, "g7": 3136, "g#7": 3322, "ab7": 3322,
     "a7": 3520, "a#7": 3729, "bb7": 3729, "b7": 3951,
-    # 옥타브 8
+
     "c8": 4186, "c#8": 4435, "db8": 4435, "d8": 4699, "d#8": 4978, "eb8": 4978,
 }
 
 # 자주 사용되는 음계별 별칭 추가
 _NOTES = {
-    # 도레미파솔라시도 (C major scale)
+
     "do": _PITCHES["c4"],    # 도
     "re": _PITCHES["d4"],    # 레  
     "mi": _PITCHES["e4"],    # 미
@@ -100,7 +99,7 @@ _NOTES = {
     "sol": _PITCHES["g4"],   # 솔
     "la": _PITCHES["a4"],    # 라
     "si": _PITCHES["b4"],    # 시
-    # 영어식 음명 (4옥타브 기준)
+
     "c": _PITCHES["c4"],
     "d": _PITCHES["d4"],
     "e": _PITCHES["e4"],
@@ -112,10 +111,8 @@ _NOTES = {
 
 
 class _HanaCommon:
-    """
-    A mixin class providing common hardware control methods for a Chaino Hana board.
-    This class is not intended to be instantiated directly.
-    """
+    # A mixin class providing common hardware control methods for a Chaino_Hana board.
+    # This class is not intended to be instantiated directly.
     HIGH = 1
     LOW = 0
     
@@ -334,6 +331,7 @@ class _HanaCommon:
             hana.stop_tone(8)
             
         .. code-block:: python
+
             >>> # Direct frequency specification
             >>> from chaino import Hana
             >>> import time
@@ -372,6 +370,7 @@ class _HanaCommon:
         :type pin: int
         
         .. code-block:: python
+
             >>> # Start tone
             >>> hana.start_tone(8, 'a4')  # Play A4 note on pin 8 infinitely
             >>> 
@@ -407,6 +406,12 @@ if IS_CPYTHON:
         This class combines the serial communication capabilities of :class:`~chaino.Chaino`
         with the Arduino-like hardware control methods specific to the Chaino_Hana board.
 
+        .. note::
+           This class inherits all methods from :class:`~chaino.chaino.Chaino`, 
+           such as :meth:`~chaino.chaino.Chaino.ping`, :meth:`~chaino.chaino.Chaino.who`,
+           :meth:`~chaino.chaino.Chaino.get_version`, etc. 
+           Only Hana-specific methods are listed below.
+
         :param port: The name of the serial port (e.g., "COM9").
         :type port: str
         :param i2c_addr: The I2C address of the target Chaino_Hana board. If 0 (default),
@@ -424,6 +429,12 @@ else:
 
         This class combines the I2C communication capabilities of :class:`~chaino.Chaino`
         with the Arduino-like hardware control methods specific to the Chaino_Hana board.
+
+        .. note::
+           This class inherits all methods from :class:`~chaino.chaino.Chaino`, 
+           such as :meth:`~chaino.chaino.Chaino.ping`, :meth:`~chaino.chaino.Chaino.who`,
+           :meth:`~chaino.chaino.Chaino.get_version`, etc. 
+           Only Hana-specific methods are listed below.
 
         :param i2c_addr: The I2C address of the target Chaino_Hana slave board.
         :type i2c_addr: int
