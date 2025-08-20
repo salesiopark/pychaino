@@ -5,9 +5,20 @@ Welcome to chaino documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: API Documentation:
+   :caption: API Reference
 
-   modules
+   api/chaino
+   api/hana
+   
+.. note::
+   **CPython Prerequisite**
+
+   When using ``chaino`` with CPython, the ``pyserial`` library is required for serial communication. Please install it separately.
+
+   .. code-block:: bash
+
+      pip install pyserial
+
 
 Quick Start
 ===========

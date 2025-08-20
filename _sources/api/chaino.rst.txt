@@ -1,0 +1,13 @@
+.. _api-chaino:
+
+Chaino Class
+============
+
+.. automodule:: chaino.chaino
+   :noindex:
+
+.. autoclass:: chaino.chaino.Chaino
+   :members:
+   :undoc-members:
+   :show-inheritance:
+   :inherited-members:

@@ -39,9 +39,10 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">API Documentation:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">chaino</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/chaino.html">Chaino Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/hana.html">Hana Class</a></li>
 </ul>
 
         </div>
@@ -70,15 +71,15 @@
              
   <h1>Source code for chaino.hana</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Chaino Hana Board Control Library</span>
-<span class="sd">=================================</span>
+<span class="sd">class for controlling Chaino_Hana Board</span>
+<span class="sd">=======================================</span>
 
 <span class="sd">This module provides a high-level, Pythonic interface for controlling a</span>
 <span class="sd">Chaino_Hana board. It abstracts the underlying function calls into</span>
 <span class="sd">an intuitive, Arduino-like API.</span>
 
 <span class="sd">The primary class, :class:`Hana`, inherits all the base communication features</span>
-<span class="sd">from :class:`chaino.Chaino` and adds specific methods for hardware manipulation</span>
+<span class="sd">from :class:`~chaino.chaino.Chaino` and adds specific methods for hardware manipulation</span>
 <span class="sd">like GPIO, ADC, PWM, and tone generation.</span>
 
 <span class="sd">CPython Usage:</span>
@@ -182,10 +183,8 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_HanaCommon</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A mixin class providing common hardware control methods for a Chaino Hana board.</span>
-<span class="sd">    This class is not intended to be instantiated directly.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># A mixin class providing common hardware control methods for a Chaino_Hana board.</span>
+    <span class="c1"># This class is not intended to be instantiated directly.</span>
     <span class="n">HIGH</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">LOW</span> <span class="o">=</span> <span class="mi">0</span>
     
@@ -479,6 +478,12 @@
 <span class="sd">        This class combines the serial communication capabilities of :class:`~chaino.Chaino`</span>
 <span class="sd">        with the Arduino-like hardware control methods specific to the Chaino_Hana board.</span>
 
+<span class="sd">        .. note::</span>
+<span class="sd">           This class inherits all methods from :class:`~chaino.chaino.Chaino`, </span>
+<span class="sd">           such as :meth:`~chaino.chaino.Chaino.ping`, :meth:`~chaino.chaino.Chaino.who`,</span>
+<span class="sd">           :meth:`~chaino.chaino.Chaino.get_version`, etc. </span>
+<span class="sd">           Only Hana-specific methods are listed below.</span>
+
 <span class="sd">        :param port: The name of the serial port (e.g., &quot;COM9&quot;).</span>
 <span class="sd">        :type port: str</span>
 <span class="sd">        :param i2c_addr: The I2C address of the target Chaino_Hana board. If 0 (default),</span>
@@ -491,7 +496,7 @@
 <span class="k">else</span><span class="p">:</span>
     
 <div class="viewcode-block" id="Hana">
-<a class="viewcode-back" href="../../chaino.html#chaino.hana.Hana">[docs]</a>
+<a class="viewcode-back" href="../../api/hana.html#chaino.hana.Hana">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">Hana</span><span class="p">(</span><span class="n">_HanaCommon</span><span class="p">,</span> <span class="n">Chaino</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        A high-level interface for controlling a Chaino Hana board from MicroPython.</span>
@@ -499,11 +504,17 @@
 <span class="sd">        This class combines the I2C communication capabilities of :class:`~chaino.Chaino`</span>
 <span class="sd">        with the Arduino-like hardware control methods specific to the Chaino_Hana board.</span>
 
+<span class="sd">        .. note::</span>
+<span class="sd">           This class inherits all methods from :class:`~chaino.chaino.Chaino`, </span>
+<span class="sd">           such as :meth:`~chaino.chaino.Chaino.ping`, :meth:`~chaino.chaino.Chaino.who`,</span>
+<span class="sd">           :meth:`~chaino.chaino.Chaino.get_version`, etc. </span>
+<span class="sd">           Only Hana-specific methods are listed below.</span>
+
 <span class="sd">        :param i2c_addr: The I2C address of the target Chaino_Hana slave board.</span>
 <span class="sd">        :type i2c_addr: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="Hana.__init__">
-<a class="viewcode-back" href="../../chaino.html#chaino.hana.Hana.__init__">[docs]</a>
+<a class="viewcode-back" href="../../api/hana.html#chaino.hana.Hana.__init__">[docs]</a>
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
             <span class="c1"># MicroPython용 Chaino는 (slave_addr)만 받는다고 가정</span>
             <span class="n">Chaino</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i2c_addr</span><span class="p">)</span></div>

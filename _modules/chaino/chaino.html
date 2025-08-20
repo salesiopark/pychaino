@@ -39,9 +39,10 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">API Documentation:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">chaino</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/chaino.html">Chaino Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/hana.html">Hana Class</a></li>
 </ul>
 
         </div>
@@ -71,8 +72,8 @@
   <h1>Source code for chaino.chaino</h1><div class="highlight"><pre>
 <span></span><span class="c1">#2025/07/15 : 최초 버전 작성</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Chaino Protocol Client Library</span>
-<span class="sd">==============================</span>
+<span class="sd">Core class of chaino Protocol Package</span>
+<span class="sd">======================================</span>
 
 <span class="sd">This module provides the Python client-side implementation for the Chaino protocol,</span>
 <span class="sd">allowing communication with Chaino-enabled Arduino devices. It supports both standard</span>
@@ -613,7 +614,7 @@
     
     
 <div class="viewcode-block" id="Chaino">
-<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino">[docs]</a>
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.Chaino">[docs]</a>
     <span class="k">class</span><span class="w"> </span><span class="nc">Chaino</span><span class="p">(</span><span class="n">_ChainoBase</span><span class="p">):</span>    
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The primary client class for communicating with a Chaino device from MicroPython.</span>
@@ -627,7 +628,7 @@
 
 
 <div class="viewcode-block" id="Chaino.scan">
-<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino.scan">[docs]</a>
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.Chaino.scan">[docs]</a>
         <span class="nd">@staticmethod</span>
         <span class="k">def</span><span class="w"> </span><span class="nf">scan</span><span class="p">():</span> <span class="c1">#i2c 포트 스캔 함수</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
@@ -661,7 +662,7 @@
 
 
 <div class="viewcode-block" id="Chaino.ping">
-<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino.ping">[docs]</a>
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.Chaino.ping">[docs]</a>
         <span class="k">def</span><span class="w"> </span><span class="nf">ping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Measures the round-trip communication latency to the target device.</span>
@@ -690,7 +691,7 @@
 
 
 <div class="viewcode-block" id="Chaino.__init__">
-<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino.__init__">[docs]</a>
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.Chaino.__init__">[docs]</a>
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr</span><span class="p">:</span><span class="nb">int</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Initializes a connection to a Chaino slave device over the I2C bus.</span>
@@ -709,7 +710,7 @@
         
         
 <div class="viewcode-block" id="Chaino.exec_func">
-<a class="viewcode-back" href="../../chaino.html#chaino.chaino.Chaino.exec_func">[docs]</a>
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.Chaino.exec_func">[docs]</a>
         <span class="k">def</span><span class="w"> </span><span class="nf">exec_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_num</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">            Executes a function by its ID on the target I2C slave device.</span>
