@@ -231,15 +231,16 @@ class _ChainoBase:
         return self.exec_func(202)
     
     
-    def get_addr(self) -> str:
+    def get_addr(self) -> int:
         """
         Gets the currently configured I2C address of the target device.
 
-        :return: The I2C address as a hexadecimal string, e.g., "0x40".
-        :rtype: str
+        :return: The I2C address as a int number
+        :rtype: int
         """
         int_addr = int(self.exec_func(203))
-        return f"0x{int_addr:2x}"
+        #return f"0x{int_addr:2x}"
+        return int_addr
     
     
     def set_addr(self, new_addr: int):
@@ -329,7 +330,7 @@ if IS_CPYTHON:#===========================================
                     #print_yellow(f'Serial("{s[0]}"): {test_obj._chaino_name}')
                     print_yellow(f'Serial("{s[0]}"): {test_obj._chaino_name}(0x{test_obj._my_slave_addr:02x})')
                 except Exception as e:
-                    #print(str(e))
+                    print(str(e))
                     print(f'Serial("{s[0]}"): Not a Chaino (master) device')
             print("Note: Chaino.scan() can detect \033[31m**MASTER**\033[0m Chaino devices only.")
 
