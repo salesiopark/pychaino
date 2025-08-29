@@ -51,7 +51,24 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#chaino.hana.Hana"><code class="docutils literal notranslate"><span class="pre">Hana</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.HIGH"><code class="docutils literal notranslate"><span class="pre">Hana.HIGH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.INPUT"><code class="docutils literal notranslate"><span class="pre">Hana.INPUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.INPUT_PULLDOWN"><code class="docutils literal notranslate"><span class="pre">Hana.INPUT_PULLDOWN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.INPUT_PULLUP"><code class="docutils literal notranslate"><span class="pre">Hana.INPUT_PULLUP</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.LOW"><code class="docutils literal notranslate"><span class="pre">Hana.LOW</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.OUTPUT"><code class="docutils literal notranslate"><span class="pre">Hana.OUTPUT</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.__init__"><code class="docutils literal notranslate"><span class="pre">Hana.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.get_millis"><code class="docutils literal notranslate"><span class="pre">Hana.get_millis()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.read_analog"><code class="docutils literal notranslate"><span class="pre">Hana.read_analog()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.read_digital"><code class="docutils literal notranslate"><span class="pre">Hana.read_digital()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.set_adc_bits"><code class="docutils literal notranslate"><span class="pre">Hana.set_adc_bits()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.set_pin_mode"><code class="docutils literal notranslate"><span class="pre">Hana.set_pin_mode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.set_pwm_bits"><code class="docutils literal notranslate"><span class="pre">Hana.set_pwm_bits()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.set_pwm_freq"><code class="docutils literal notranslate"><span class="pre">Hana.set_pwm_freq()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.start_tone"><code class="docutils literal notranslate"><span class="pre">Hana.start_tone()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.stop_tone"><code class="docutils literal notranslate"><span class="pre">Hana.stop_tone()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.write_analog"><code class="docutils literal notranslate"><span class="pre">Hana.write_analog()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chaino.hana.Hana.write_digital"><code class="docutils literal notranslate"><span class="pre">Hana.write_digital()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -140,8 +157,8 @@ with the Arduino-like hardware control methods specific to the Chaino_Hana board
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This class inherits all methods from <a class="reference internal" href="chaino.html#chaino.chaino.Chaino" title="chaino.chaino.Chaino"><code class="xref py py-class docutils literal notranslate"><span class="pre">Chaino</span></code></a>,
-such as <a class="reference internal" href="chaino.html#chaino.chaino.Chaino.ping" title="chaino.chaino.Chaino.ping"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ping()</span></code></a>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">who()</span></code>,
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_version()</span></code>, etc.
+such as <a class="reference internal" href="chaino.html#chaino.chaino.Chaino.ping" title="chaino.chaino.Chaino.ping"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ping()</span></code></a>, <a class="reference internal" href="chaino.html#chaino.chaino.Chaino.who" title="chaino.chaino.Chaino.who"><code class="xref py py-meth docutils literal notranslate"><span class="pre">who()</span></code></a>,
+<a class="reference internal" href="chaino.html#chaino.chaino.Chaino.get_version" title="chaino.chaino.Chaino.get_version"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_version()</span></code></a>, etc.
 Only Hana-specific methods are listed below.</p>
 </div>
 <dl class="field-list simple">
@@ -153,10 +170,317 @@ commands are sent to the master device connected via serial.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">HIGH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">INPUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">INPUT_PULLDOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">INPUT_PULLUP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">LOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">OUTPUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i2c_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/chaino/hana.html#Hana.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_millis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span></dt>
+<dd><p>Returns the number of milliseconds passed since the board began running.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">millis()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of milliseconds as an integer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><p>This number will overflow (go back to zero) after approximately 50 days.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">read_analog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span></dt>
+<dd><p>Reads the value from the specified analog pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">analogRead()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pin</strong> (<em>int</em>) – The number of the analog input pin to read from (e.g., 26~29 on RP2040).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The analog reading on the pin. The range depends on the ADC
+resolution (e.g., 0-1023 for 10-bit, 0-4095 for 12-bit).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Seealso<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#chaino.hana.Hana.set_adc_bits" title="chaino.hana.Hana.set_adc_bits"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_adc_bits()</span></code></a> to change the reading resolution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">read_digital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span></dt>
+<dd><p>Reads the value from a specified digital pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">digitalRead()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pin</strong> (<em>int</em>) – The number of the digital pin you want to read.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The state of the pin, either <a class="reference internal" href="#chaino.hana.Hana.HIGH" title="chaino.hana.Hana.HIGH"><code class="xref py py-attr docutils literal notranslate"><span class="pre">HIGH</span></code></a> (1) or <a class="reference internal" href="#chaino.hana.Hana.LOW" title="chaino.hana.Hana.LOW"><code class="xref py py-attr docutils literal notranslate"><span class="pre">LOW</span></code></a> (0).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">button_state</span> <span class="o">=</span> <span class="n">hana</span><span class="o">.</span><span class="n">read_digital</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">button_state</span> <span class="o">==</span> <span class="n">hana</span><span class="o">.</span><span class="n">LOW</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Button is pressed!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">set_adc_bits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Sets the resolution for <a class="reference internal" href="#chaino.hana.Hana.read_analog" title="chaino.hana.Hana.read_analog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read_analog()</span></code></a>.
+This is equivalent to <code class="docutils literal notranslate"><span class="pre">analogReadResolution()</span></code> on supported boards.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bits</strong> (<em>int</em>) – The desired resolution in bits. Common values are 10 (for a
+range of 0-1023) or 12 (for a range of 0-4095).</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set ADC to 12-bit resolution for more precision</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_adc_bits</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">high_res_value</span> <span class="o">=</span> <span class="n">hana</span><span class="o">.</span><span class="n">read_analog</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span> <span class="c1"># Returns a value between 0 and 4095</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">set_pin_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Configures the specified pin to behave either as an input or an output.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">pinMode()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The number of the pin whose mode you wish to set.</p></li>
+<li><p><strong>mode</strong> (<em>int</em>) – The mode for the pin. Can be <a class="reference internal" href="#chaino.hana.Hana.INPUT" title="chaino.hana.Hana.INPUT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">INPUT</span></code></a>, <a class="reference internal" href="#chaino.hana.Hana.OUTPUT" title="chaino.hana.Hana.OUTPUT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">OUTPUT</span></code></a>,
+<a class="reference internal" href="#chaino.hana.Hana.INPUT_PULLUP" title="chaino.hana.Hana.INPUT_PULLUP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">INPUT_PULLUP</span></code></a>, or <a class="reference internal" href="#chaino.hana.Hana.INPUT_PULLDOWN" title="chaino.hana.Hana.INPUT_PULLDOWN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">INPUT_PULLDOWN</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set pin 13 as an output for an LED</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pin_mode</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">OUTPUT</span><span class="p">)</span>
+
+<span class="c1"># Set pin 2 as an input with a pull-up for a button</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pin_mode</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">INPUT_PULLUP</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">set_pwm_bits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Sets the range for the duty cycle used in <a class="reference internal" href="#chaino.hana.Hana.write_analog" title="chaino.hana.Hana.write_analog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_analog()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin to write to.</p></li>
+<li><p><strong>bits</strong> (<em>int</em>) – The number of bits which defines the
+PWM resolution (e.g., 8, 10, 12, etc).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set PWM resolution to 9-bits</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pwm_bits</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1023</span><span class="p">)</span>
+<span class="c1"># Now set LED to 50% brightness with the new range</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_analog</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">set_pwm_freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Sets the frequency for PWM signals generated by <a class="reference internal" href="#chaino.hana.Hana.write_analog" title="chaino.hana.Hana.write_analog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_analog()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin to write to.</p></li>
+<li><p><strong>freq</strong> (<em>int</em>) – The desired frequency in Hertz (Hz).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set PWM frequency to 1 kHz for smoother LED fading</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pwm_freq</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">start_tone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Generates a square wave tone on a pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">tone()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin on which to generate the tone.</p></li>
+<li><p><strong>freq</strong> (<em>int</em><em> | </em><em>str</em>) – The frequency of the tone in Hertz, or a string representing a
+musical note (e.g., ‘c4’, ‘a#5’, ‘db3’).</p></li>
+<li><p><strong>duration</strong> (<em>int</em>) – The duration of the tone in milliseconds. If 0 (default),
+the tone plays continuously until <a class="reference internal" href="#chaino.hana.Hana.stop_tone" title="chaino.hana.Hana.stop_tone"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stop_tone()</span></code></a> is called.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If an unrecognized note string is provided.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Play a 440 Hz &#39;A&#39; note for 1 second</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+<span class="c1"># Play a &#39;C4&#39; note continuously</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">stop_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Direct frequency specification</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">chaino</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hana</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span> <span class="o">=</span> <span class="n">Hana</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># 440Hz on pin 8 for 1 second</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Note name specification</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>   <span class="c1"># A4 (440Hz) on pin 8 for 1 second</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c#5&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>   <span class="c1"># C#5 on pin 8 for 0.5 seconds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;do&#39;</span><span class="p">)</span>         <span class="c1"># Do note on pin 8 infinitely</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple melody</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">melody</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;do&#39;</span><span class="p">,</span> <span class="s1">&#39;re&#39;</span><span class="p">,</span> <span class="s1">&#39;mi&#39;</span><span class="p">,</span> <span class="s1">&#39;fa&#39;</span><span class="p">,</span> <span class="s1">&#39;sol&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">melody</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">note</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Case insensitive</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">stop_tone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Stops the tone being generated on a pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">noTone()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pin</strong> (<em>int</em>) – The pin on which to stop the tone.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Start tone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">)</span>  <span class="c1"># Play A4 note on pin 8 infinitely</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Do other work...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>    <span class="c1"># Wait 2 seconds</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Stop tone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">stop_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>     <span class="c1"># Stop tone generation on pin 8</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create silence between notes in melody</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>   <span class="c1"># Do note for 0.5 seconds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">stop_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>           <span class="c1"># Stop immediately</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>           <span class="c1"># 1.5 second silence</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>   <span class="c1"># Re note for 0.5 seconds</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>Only needed when start_tone() method’s duration parameter is 0.</p></li>
+<li><p>When duration is specified, tone stops automatically, stop_tone() is unnecessary.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">write_analog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Writes an analog value (PWM wave) to a pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">analogWrite()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin to write to.</p></li>
+<li><p><strong>duty</strong> (<em>int</em>) – The duty cycle for the PWM signal. The value should be between
+0 (always off) and the maximum range (default is 255).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Seealso<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#chaino.hana.Hana.set_pwm_freq" title="chaino.hana.Hana.set_pwm_freq"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_pwm_freq()</span></code></a>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_pwm_range()</span></code></p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fade an LED to half brightness</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_analog</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">write_digital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Write a HIGH or a LOW value to a digital pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">digitalWrite()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The number of the pin to write to.</p></li>
+<li><p><strong>status</strong> (<em>int</em>) – The value to write, either <a class="reference internal" href="#chaino.hana.Hana.HIGH" title="chaino.hana.Hana.HIGH"><code class="xref py py-attr docutils literal notranslate"><span class="pre">HIGH</span></code></a> or <a class="reference internal" href="#chaino.hana.Hana.LOW" title="chaino.hana.Hana.LOW"><code class="xref py py-attr docutils literal notranslate"><span class="pre">LOW</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Turn an LED on</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_digital</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">HIGH</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Turn the LED off</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_digital</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">LOW</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </dd></dl>
 
@@ -170,8 +494,8 @@ with the Arduino-like hardware control methods specific to the Chaino_Hana board
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This class inherits all methods from <a class="reference internal" href="chaino.html#chaino.chaino.Chaino" title="chaino.chaino.Chaino"><code class="xref py py-class docutils literal notranslate"><span class="pre">Chaino</span></code></a>,
-such as <a class="reference internal" href="chaino.html#chaino.chaino.Chaino.ping" title="chaino.chaino.Chaino.ping"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ping()</span></code></a>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">who()</span></code>,
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_version()</span></code>, etc.
+such as <a class="reference internal" href="chaino.html#chaino.chaino.Chaino.ping" title="chaino.chaino.Chaino.ping"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ping()</span></code></a>, <a class="reference internal" href="chaino.html#chaino.chaino.Chaino.who" title="chaino.chaino.Chaino.who"><code class="xref py py-meth docutils literal notranslate"><span class="pre">who()</span></code></a>,
+<a class="reference internal" href="chaino.html#chaino.chaino.Chaino.get_version" title="chaino.chaino.Chaino.get_version"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_version()</span></code></a>, etc.
 Only Hana-specific methods are listed below.</p>
 </div>
 <dl class="field-list simple">
@@ -183,10 +507,317 @@ commands are sent to the master device connected via serial.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.HIGH">
+<span class="sig-name descname"><span class="pre">HIGH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#chaino.hana.Hana.HIGH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.INPUT">
+<span class="sig-name descname"><span class="pre">INPUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#chaino.hana.Hana.INPUT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.INPUT_PULLDOWN">
+<span class="sig-name descname"><span class="pre">INPUT_PULLDOWN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#chaino.hana.Hana.INPUT_PULLDOWN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.INPUT_PULLUP">
+<span class="sig-name descname"><span class="pre">INPUT_PULLUP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#chaino.hana.Hana.INPUT_PULLUP" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.LOW">
+<span class="sig-name descname"><span class="pre">LOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#chaino.hana.Hana.LOW" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="chaino.hana.Hana.OUTPUT">
+<span class="sig-name descname"><span class="pre">OUTPUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#chaino.hana.Hana.OUTPUT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="chaino.hana.Hana.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">port</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i2c_addr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/chaino/hana.html#Hana.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#chaino.hana.Hana.__init__" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.get_millis">
+<span class="sig-name descname"><span class="pre">get_millis</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#chaino.hana.Hana.get_millis" title="Link to this definition"></a></dt>
+<dd><p>Returns the number of milliseconds passed since the board began running.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">millis()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The number of milliseconds as an integer.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><p>This number will overflow (go back to zero) after approximately 50 days.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.read_analog">
+<span class="sig-name descname"><span class="pre">read_analog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#chaino.hana.Hana.read_analog" title="Link to this definition"></a></dt>
+<dd><p>Reads the value from the specified analog pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">analogRead()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pin</strong> (<em>int</em>) – The number of the analog input pin to read from (e.g., 26~29 on RP2040).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The analog reading on the pin. The range depends on the ADC
+resolution (e.g., 0-1023 for 10-bit, 0-4095 for 12-bit).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Seealso<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#chaino.hana.Hana.set_adc_bits" title="chaino.hana.Hana.set_adc_bits"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_adc_bits()</span></code></a> to change the reading resolution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.read_digital">
+<span class="sig-name descname"><span class="pre">read_digital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="headerlink" href="#chaino.hana.Hana.read_digital" title="Link to this definition"></a></dt>
+<dd><p>Reads the value from a specified digital pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">digitalRead()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pin</strong> (<em>int</em>) – The number of the digital pin you want to read.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The state of the pin, either <a class="reference internal" href="#chaino.hana.Hana.HIGH" title="chaino.hana.Hana.HIGH"><code class="xref py py-attr docutils literal notranslate"><span class="pre">HIGH</span></code></a> (1) or <a class="reference internal" href="#chaino.hana.Hana.LOW" title="chaino.hana.Hana.LOW"><code class="xref py py-attr docutils literal notranslate"><span class="pre">LOW</span></code></a> (0).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">button_state</span> <span class="o">=</span> <span class="n">hana</span><span class="o">.</span><span class="n">read_digital</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">button_state</span> <span class="o">==</span> <span class="n">hana</span><span class="o">.</span><span class="n">LOW</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Button is pressed!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_adc_bits">
+<span class="sig-name descname"><span class="pre">set_adc_bits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_adc_bits" title="Link to this definition"></a></dt>
+<dd><p>Sets the resolution for <a class="reference internal" href="#chaino.hana.Hana.read_analog" title="chaino.hana.Hana.read_analog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">read_analog()</span></code></a>.
+This is equivalent to <code class="docutils literal notranslate"><span class="pre">analogReadResolution()</span></code> on supported boards.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bits</strong> (<em>int</em>) – The desired resolution in bits. Common values are 10 (for a
+range of 0-1023) or 12 (for a range of 0-4095).</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set ADC to 12-bit resolution for more precision</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_adc_bits</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">high_res_value</span> <span class="o">=</span> <span class="n">hana</span><span class="o">.</span><span class="n">read_analog</span><span class="p">(</span><span class="mi">26</span><span class="p">)</span> <span class="c1"># Returns a value between 0 and 4095</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_pin_mode">
+<span class="sig-name descname"><span class="pre">set_pin_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_pin_mode" title="Link to this definition"></a></dt>
+<dd><p>Configures the specified pin to behave either as an input or an output.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">pinMode()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The number of the pin whose mode you wish to set.</p></li>
+<li><p><strong>mode</strong> (<em>int</em>) – The mode for the pin. Can be <a class="reference internal" href="#chaino.hana.Hana.INPUT" title="chaino.hana.Hana.INPUT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">INPUT</span></code></a>, <a class="reference internal" href="#chaino.hana.Hana.OUTPUT" title="chaino.hana.Hana.OUTPUT"><code class="xref py py-attr docutils literal notranslate"><span class="pre">OUTPUT</span></code></a>,
+<a class="reference internal" href="#chaino.hana.Hana.INPUT_PULLUP" title="chaino.hana.Hana.INPUT_PULLUP"><code class="xref py py-attr docutils literal notranslate"><span class="pre">INPUT_PULLUP</span></code></a>, or <a class="reference internal" href="#chaino.hana.Hana.INPUT_PULLDOWN" title="chaino.hana.Hana.INPUT_PULLDOWN"><code class="xref py py-attr docutils literal notranslate"><span class="pre">INPUT_PULLDOWN</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set pin 13 as an output for an LED</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pin_mode</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">OUTPUT</span><span class="p">)</span>
+
+<span class="c1"># Set pin 2 as an input with a pull-up for a button</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pin_mode</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">INPUT_PULLUP</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_pwm_bits">
+<span class="sig-name descname"><span class="pre">set_pwm_bits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_pwm_bits" title="Link to this definition"></a></dt>
+<dd><p>Sets the range for the duty cycle used in <a class="reference internal" href="#chaino.hana.Hana.write_analog" title="chaino.hana.Hana.write_analog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_analog()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin to write to.</p></li>
+<li><p><strong>bits</strong> (<em>int</em>) – The number of bits which defines the
+PWM resolution (e.g., 8, 10, 12, etc).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set PWM resolution to 9-bits</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pwm_bits</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1023</span><span class="p">)</span>
+<span class="c1"># Now set LED to 50% brightness with the new range</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_analog</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">512</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.set_pwm_freq">
+<span class="sig-name descname"><span class="pre">set_pwm_freq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.set_pwm_freq" title="Link to this definition"></a></dt>
+<dd><p>Sets the frequency for PWM signals generated by <a class="reference internal" href="#chaino.hana.Hana.write_analog" title="chaino.hana.Hana.write_analog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_analog()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin to write to.</p></li>
+<li><p><strong>freq</strong> (<em>int</em>) – The desired frequency in Hertz (Hz).</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set PWM frequency to 1 kHz for smoother LED fading</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">set_pwm_freq</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.start_tone">
+<span class="sig-name descname"><span class="pre">start_tone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.start_tone" title="Link to this definition"></a></dt>
+<dd><p>Generates a square wave tone on a pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">tone()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin on which to generate the tone.</p></li>
+<li><p><strong>freq</strong> (<em>int</em><em> | </em><em>str</em>) – The frequency of the tone in Hertz, or a string representing a
+musical note (e.g., ‘c4’, ‘a#5’, ‘db3’).</p></li>
+<li><p><strong>duration</strong> (<em>int</em>) – The duration of the tone in milliseconds. If 0 (default),
+the tone plays continuously until <a class="reference internal" href="#chaino.hana.Hana.stop_tone" title="chaino.hana.Hana.stop_tone"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stop_tone()</span></code></a> is called.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If an unrecognized note string is provided.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Play a 440 Hz &#39;A&#39; note for 1 second</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+<span class="c1"># Play a &#39;C4&#39; note continuously</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">stop_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Direct frequency specification</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">chaino</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hana</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span> <span class="o">=</span> <span class="n">Hana</span><span class="p">(</span><span class="s2">&quot;COM9&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">440</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># 440Hz on pin 8 for 1 second</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Note name specification</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>   <span class="c1"># A4 (440Hz) on pin 8 for 1 second</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c#5&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>   <span class="c1"># C#5 on pin 8 for 0.5 seconds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;do&#39;</span><span class="p">)</span>         <span class="c1"># Do note on pin 8 infinitely</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Simple melody</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">melody</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;do&#39;</span><span class="p">,</span> <span class="s1">&#39;re&#39;</span><span class="p">,</span> <span class="s1">&#39;mi&#39;</span><span class="p">,</span> <span class="s1">&#39;fa&#39;</span><span class="p">,</span> <span class="s1">&#39;sol&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">note</span> <span class="ow">in</span> <span class="n">melody</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="n">note</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Case insensitive</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.stop_tone">
+<span class="sig-name descname"><span class="pre">stop_tone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.stop_tone" title="Link to this definition"></a></dt>
+<dd><p>Stops the tone being generated on a pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">noTone()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pin</strong> (<em>int</em>) – The pin on which to stop the tone.</p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Start tone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">)</span>  <span class="c1"># Play A4 note on pin 8 infinitely</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Do other work...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>    <span class="c1"># Wait 2 seconds</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Stop tone</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">stop_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>     <span class="c1"># Stop tone generation on pin 8</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create silence between notes in melody</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>   <span class="c1"># Do note for 0.5 seconds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">stop_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>           <span class="c1"># Stop immediately</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>           <span class="c1"># 1.5 second silence</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hana</span><span class="o">.</span><span class="n">start_tone</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>   <span class="c1"># Re note for 0.5 seconds</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>Only needed when start_tone() method’s duration parameter is 0.</p></li>
+<li><p>When duration is specified, tone stops automatically, stop_tone() is unnecessary.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.write_analog">
+<span class="sig-name descname"><span class="pre">write_analog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.write_analog" title="Link to this definition"></a></dt>
+<dd><p>Writes an analog value (PWM wave) to a pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">analogWrite()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The pin to write to.</p></li>
+<li><p><strong>duty</strong> (<em>int</em>) – The duty cycle for the PWM signal. The value should be between
+0 (always off) and the maximum range (default is 255).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Seealso<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#chaino.hana.Hana.set_pwm_freq" title="chaino.hana.Hana.set_pwm_freq"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_pwm_freq()</span></code></a>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_pwm_range()</span></code></p>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fade an LED to half brightness</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_analog</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="chaino.hana.Hana.write_digital">
+<span class="sig-name descname"><span class="pre">write_digital</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chaino.hana.Hana.write_digital" title="Link to this definition"></a></dt>
+<dd><p>Write a HIGH or a LOW value to a digital pin.
+This is equivalent to Arduino’s <code class="docutils literal notranslate"><span class="pre">digitalWrite()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pin</strong> (<em>int</em>) – The number of the pin to write to.</p></li>
+<li><p><strong>status</strong> (<em>int</em>) – The value to write, either <a class="reference internal" href="#chaino.hana.Hana.HIGH" title="chaino.hana.Hana.HIGH"><code class="xref py py-attr docutils literal notranslate"><span class="pre">HIGH</span></code></a> or <a class="reference internal" href="#chaino.hana.Hana.LOW" title="chaino.hana.Hana.LOW"><code class="xref py py-attr docutils literal notranslate"><span class="pre">LOW</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Turn an LED on</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_digital</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">HIGH</span><span class="p">)</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Turn the LED off</span>
+<span class="n">hana</span><span class="o">.</span><span class="n">write_digital</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="n">hana</span><span class="o">.</span><span class="n">LOW</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </dd></dl>
 
