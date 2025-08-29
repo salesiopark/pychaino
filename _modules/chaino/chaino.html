@@ -303,15 +303,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">202</span><span class="p">)</span>
     
     
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the currently configured I2C address of the target device.</span>
 
-<span class="sd">        :return: The I2C address as a hexadecimal string, e.g., &quot;0x40&quot;.</span>
-<span class="sd">        :rtype: str</span>
+<span class="sd">        :return: The I2C address as a int number</span>
+<span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">int_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">203</span><span class="p">))</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;0x</span><span class="si">{</span><span class="n">int_addr</span><span class="si">:</span><span class="s2">2x</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="c1">#return f&quot;0x{int_addr:2x}&quot;</span>
+        <span class="k">return</span> <span class="n">int_addr</span>
     
     
     <span class="k">def</span><span class="w"> </span><span class="nf">set_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_addr</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
@@ -401,7 +402,7 @@
                     <span class="c1">#print_yellow(f&#39;Serial(&quot;{s[0]}&quot;): {test_obj._chaino_name}&#39;)</span>
                     <span class="n">print_yellow</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Serial(&quot;</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;): </span><span class="si">{</span><span class="n">test_obj</span><span class="o">.</span><span class="n">_chaino_name</span><span class="si">}</span><span class="s1">(0x</span><span class="si">{</span><span class="n">test_obj</span><span class="o">.</span><span class="n">_my_slave_addr</span><span class="si">:</span><span class="s1">02x</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="c1">#print(str(e))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Serial(&quot;</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;): Not a Chaino (master) device&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Note: Chaino.scan() can detect </span><span class="se">\033</span><span class="s2">[31m**MASTER**</span><span class="se">\033</span><span class="s2">[0m Chaino devices only.&quot;</span><span class="p">)</span>
 
