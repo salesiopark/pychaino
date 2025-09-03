@@ -153,25 +153,33 @@
 <span class="sd">파이썬의 crc_hqx(data, 0x0000)는 이 표준과 정확히 일치하며,</span>
 <span class="sd">C/C++로 구현된 코드도 쉽게 찾을 수 있고 검증도 용이하다.</span>
 <span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="gen_CRC16_XMODEM">
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.gen_CRC16_XMODEM">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">gen_CRC16_XMODEM</span><span class="p">(</span><span class="n">payload</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :exclude-from-docs:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">crc_hqx</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">crc_hqx</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span></div>
+
 
 
 <span class="c1">#진리값만 &quot;1&quot;/&quot;0&quot;으로 만들고 나머지는 그대로 str로 변환</span>
+<div class="viewcode-block" id="map_args">
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.map_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">map_args</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :exclude-from-docs:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s2">&quot;1&quot;</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="s2">&quot;0&quot;</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>        
+    <span class="k">return</span> <span class="s2">&quot;1&quot;</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="s2">&quot;0&quot;</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>        </div>
+
 
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">패킷 구조: [crc:2byte]payload (끝에 {EOT}는 없다)</span>
 <span class="sd">따라서 첫 두 바이트(crc16)를 분리하고 나머지로 crc를 계산하여 비교</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="is_crc_matched">
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.is_crc_matched">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_crc_matched</span><span class="p">(</span><span class="n">packet</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :exclude-from-docs:</span>
@@ -180,7 +188,8 @@
     <span class="n">received_crc</span> <span class="o">=</span> <span class="nb">int</span><span class="o">.</span><span class="n">from_bytes</span><span class="p">(</span><span class="n">packet</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;big&#39;</span><span class="p">)</span>
     <span class="n">computed_crc</span> <span class="o">=</span> <span class="n">crc_hqx</span><span class="p">(</span><span class="n">packet</span><span class="p">[</span><span class="mi">2</span><span class="p">:],</span> <span class="mi">0</span><span class="p">)</span>
     <span class="c1">#print(f&quot;received CRC:0x{hex(received_crc)}, computed CRC:0x{hex(computed_crc)}&quot;)</span>
-    <span class="k">return</span> <span class="n">received_crc</span> <span class="o">==</span> <span class="n">computed_crc</span>
+    <span class="k">return</span> <span class="n">received_crc</span> <span class="o">==</span> <span class="n">computed_crc</span></div>
+
 
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -190,6 +199,8 @@
 <span class="sd">    AD (i2c_addr) : 두 자리(고정) 16진수</span>
 <span class="sd">    FN (func_num) : 한 자리(혹은 두 자리) 16진수 - 아두이노에서 최대 200개까지 등록</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="gen_exec_func_packet">
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.gen_exec_func_packet">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">gen_exec_func_packet</span><span class="p">(</span><span class="n">i2c_addr</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">func_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :exclude-from-docs:</span>
@@ -204,43 +215,59 @@
     <span class="n">bytes_crc</span> <span class="o">=</span> <span class="n">gen_CRC16_XMODEM</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
     <span class="n">packet</span> <span class="o">=</span> <span class="n">bytes_crc</span> <span class="o">+</span> <span class="n">payload</span>
     <span class="c1">#print_packet(packet,&quot;packet sent:&quot;)</span>
-    <span class="k">return</span> <span class="n">packet</span>
+    <span class="k">return</span> <span class="n">packet</span></div>
 
 
+
+<div class="viewcode-block" id="str_packet">
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.str_packet">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">str_packet</span><span class="p">(</span><span class="n">packet</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :exclude-from-docs:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">str_crc16</span><span class="p">,</span> <span class="n">bytes_data</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&lt;[0x</span><span class="si">{</span><span class="n">packet</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">hex</span><span class="p">()</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">packet</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
     <span class="n">replaced</span> <span class="o">=</span> <span class="n">bytes_data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">bRS</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">{RS}</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">bEOT</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="si">{EOT}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">str_crc16</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">replaced</span><span class="p">)[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&gt;:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes&quot;</span>
+    <span class="k">return</span> <span class="n">str_crc16</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">replaced</span><span class="p">)[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;&gt;:</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span><span class="si">}</span><span class="s2"> bytes&quot;</span></div>
 
 
+
+<div class="viewcode-block" id="print_err">
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.print_err">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">print_err</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span> <span class="c1">#RED text</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :exclude-from-docs:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31mError : &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31mError : &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
 
 
+
+<div class="viewcode-block" id="print_err2">
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.print_err2">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">print_err2</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span> <span class="c1">#BLUE text</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :exclude-from-docs:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[34mError : &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[34mError : &quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="print_red">
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.print_red">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">print_red</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span> <span class="c1">#RED text</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :exclude-from-docs:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m&quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[31m&quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
 
 
+
+<div class="viewcode-block" id="print_yellow">
+<a class="viewcode-back" href="../../api/chaino.html#chaino.chaino.print_yellow">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">print_yellow</span><span class="p">(</span><span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span><span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span> <span class="c1">#BLUE text</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    :exclude-from-docs:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[33m&quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[33m&quot;</span> <span class="o">+</span> <span class="n">msg</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">)</span></div>
+
 
 <span class="c1">########################################################################</span>
 <span class="c1"># 공통 베이스 클래스</span>
@@ -303,15 +330,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">202</span><span class="p">)</span>
     
     
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the currently configured I2C address of the target device.</span>
 
-<span class="sd">        :return: The I2C address as a hexadecimal string, e.g., &quot;0x40&quot;.</span>
-<span class="sd">        :rtype: str</span>
+<span class="sd">        :return: The I2C address as a int number</span>
+<span class="sd">        :rtype: int</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">int_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_func</span><span class="p">(</span><span class="mi">203</span><span class="p">))</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;0x</span><span class="si">{</span><span class="n">int_addr</span><span class="si">:</span><span class="s2">2x</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="c1">#return f&quot;0x{int_addr:2x}&quot;</span>
+        <span class="k">return</span> <span class="n">int_addr</span>
     
     
     <span class="k">def</span><span class="w"> </span><span class="nf">set_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_addr</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
@@ -401,7 +429,7 @@
                     <span class="c1">#print_yellow(f&#39;Serial(&quot;{s[0]}&quot;): {test_obj._chaino_name}&#39;)</span>
                     <span class="n">print_yellow</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Serial(&quot;</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;): </span><span class="si">{</span><span class="n">test_obj</span><span class="o">.</span><span class="n">_chaino_name</span><span class="si">}</span><span class="s1">(0x</span><span class="si">{</span><span class="n">test_obj</span><span class="o">.</span><span class="n">_my_slave_addr</span><span class="si">:</span><span class="s1">02x</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="c1">#print(str(e))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Serial(&quot;</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;): Not a Chaino (master) device&#39;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Note: Chaino.scan() can detect </span><span class="se">\033</span><span class="s2">[31m**MASTER**</span><span class="se">\033</span><span class="s2">[0m Chaino devices only.&quot;</span><span class="p">)</span>
 

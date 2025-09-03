@@ -392,7 +392,9 @@ if IS_CPYTHON:#===========================================
                 self._connect_serial() #serial port 연결
 
             elif i2c_addr == 0: #만약 port가 _serials에 있다면 이미 연결된 것임
-                print_err2(f'Serial port("{port}") is already opened.')
+                #print_err2(f'Serial port("{port}") is already opened.')
+                raise Exception(f'Serial port("{port}") is already opened.')
+            else:
                 self._serial = Chaino._serials[port] #이미 연결된 serial 객체를 가져온다
 
 
