@@ -20,9 +20,9 @@ CPython Usage:
     # Connect to a Hana board (master or slave)
     hana = Hana("COM9", i2c_addr=0x42)
 
-    # Use Arduino-like functions
-    hana.set_pin_mode(13, hana.OUTPUT)
-    hana.write_digital(13, hana.HIGH)
+    # Use digital pin control functions
+    hana.set_high(13)
+    touch = hana.is_high(2)
     
     pot_value = hana.read_analog(26)
     print(f"Analog value: {pot_value}")
@@ -40,7 +40,6 @@ MicroPython Usage:
     hana = Hana(0x42)
 
     # Blink the onboard neopixel
-    hana.set_pin_mode(13, hana.OUTPUT)
     for _ in range(3):
         hana.set_neopixel(255,255,255)
         time.sleep(0.5)
@@ -107,44 +106,66 @@ _NOTES = {
     "g": _PITCHES["g4"],
     "a": _PITCHES["a4"],
     "b": _PITCHES["b4"],
+
+    "도": _PITCHES["c4"],
+    "레": _PITCHES["d4"],
+    "미": _PITCHES["e4"],
+    "파": _PITCHES["f4"],
+    "솔": _PITCHES["g4"],
+    "라": _PITCHES["a4"],
+    "시": _PITCHES["b4"],
 }
 
 
 class _HanaBase:
     # A mixin class providing common hardware control methods for a Chaino_Hana board.
     # This class is not intended to be instantiated directly.
-    HIGH = 1
-    LOW = 0
     
-    INPUT = 0
-    OUTPUT = 1
-    INPUT_PULLUP = 2
-    INPUT_PULLDOWN = 3
 
-
-    def set_pin_mode(self, pin: int, mode: int):
+    #☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷
+    def set_high(self, pin: int):
         """
-        Configures the specified pin to behave either as an input or an output.
-        This is equivalent to Arduino's ``pinMode()``.
+        Write a HIGH value to a digital pin.
+        This is equivalent to Arduino's ``digitalWrite(pin, HIGH)``.
 
-        :param pin: The number of the pin whose mode you wish to set.
+        :param pin: The number of the pin to write to.
         :type pin: int
-        :param mode: The mode for the pin. Can be :attr:`INPUT`, :attr:`OUTPUT`,
-                     :attr:`INPUT_PULLUP`, or :attr:`INPUT_PULLDOWN`.
-        :type mode: int
 
         .. code-block:: python
 
-            # Set pin 13 as an output for an LED
-            hana.set_pin_mode(13, hana.OUTPUT)
-            
-            # Set pin 2 as an input with a pull-up for a button
-            hana.set_pin_mode(2, hana.INPUT_PULLUP)
+            # Turn an LED on
+            hana.set_high(13)
+            time.sleep(1)
+            # Turn the LED off
+            hana.set_low(13)
         """
-        self.exec_func(11, pin, mode)
+        self.exec_func(10, pin)
 
 
-    def read_digital(self, pin: int) -> int:
+
+    def set_low(self, pin: int):
+        """
+        Write a LOW value to a digital pin.
+        This is equivalent to Arduino's ``digitalWrite(pin,LOW)``.
+
+        :param pin: The number of the pin to write to.
+        :type pin: int
+
+        .. code-block:: python
+
+            # Turn an LED on
+            hana.set_high(13)
+            time.sleep(1)
+            # Turn the LED off
+            hana.set_low(13)
+        """
+        self.exec_func(11, pin)
+
+
+
+    #def read_digital(self, pin: int) -> int:
+    #def read_pin(self, pin: int) -> int:
+    def is_high(self, pin: int) -> bool:
         """
         Reads the value from a specified digital pin.
         This is equivalent to Arduino's ``digitalRead()``.
@@ -154,36 +175,22 @@ class _HanaBase:
         :return: The state of the pin, either :attr:`HIGH` (1) or :attr:`LOW` (0).
         :rtype: int
 
+        .. note::
+           If :meth:`pull_up()` or :meth:`pull_down()` has not been called
+           on the pin previously, it will internally be configured as ``INPUT``
+           (equivalent to ``pinMode(pin, INPUT)`` in Arduino) automatically.
+
         .. code-block:: python
-        
-            button_state = hana.read_digital(2)
-            if button_state == hana.LOW:
-                print("Button is pressed!")
+            if is_high():
+                print("Touched.")
         """
-        return int(self.exec_func(12, pin))
+        #return int(self.exec_func(12, pin))
+        return int(self.exec_func(12, pin))==1;
+
     
-
-
-    def write_digital(self, pin: int, status: int):
-        """
-        Write a HIGH or a LOW value to a digital pin.
-        This is equivalent to Arduino's ``digitalWrite()``.
-
-        :param pin: The number of the pin to write to.
-        :type pin: int
-        :param status: The value to write, either :attr:`HIGH` or :attr:`LOW`.
-        :type status: int
-
-        .. code-block:: python
-
-            # Turn an LED on
-            hana.write_digital(13, hana.HIGH)
-            time.sleep(1)
-            # Turn the LED off
-            hana.write_digital(13, hana.LOW)
-        """
-        self.exec_func(13, pin, status)
-
+    def is_low(self, pin: int) ->bool:
+        return not self.is_high(pin)
+    
 
 
     def read_analog(self, pin: int) -> int:
@@ -198,10 +205,10 @@ class _HanaBase:
         :rtype: int
         :seealso: :meth:`set_adc_bits` to change the reading resolution.
         """
-        return int(self.exec_func(14, pin))
+        return int(self.exec_func(13, pin))
     
 
-    def set_adc_bits(self, bits: int):
+    def set_analog_resolution(self, bits: int):
         """
         Sets the resolution for :meth:`read_analog`.
         This is equivalent to ``analogReadResolution()`` on supported boards.
@@ -213,10 +220,77 @@ class _HanaBase:
         .. code-block:: python
 
             # Set ADC to 12-bit resolution for more precision
-            hana.set_adc_bits(12)
+            hana.set_analog_resolution(12)
             high_res_value = hana.read_analog(26) # Returns a value between 0 and 4095
         """
-        self.exec_func(15, bits)
+        self.exec_func(14, bits)
+
+
+
+    def pull_up(self, pin: int):
+        """
+        Enables the internal pull-up resistor on the specified digital pin.
+        This is equivalent to setting pinMode(pin, INPUT_PULLUP) in Arduino,
+        but specifically for activating the pull-up.
+
+        :param pin: The number of the digital pin to configure.
+        :type pin: int
+
+        .. code-block:: python
+
+            # Enable pull-up on pin 2 for a button connected to ground
+            hana.pull_up(2)
+            # Now, hana.is_high(2) will return True when the button is not pressed,
+            # and LOW when the button is pressed.
+        """
+        self.exec_func(15, pin)
+
+
+
+    def pull_down(self, pin: int):
+        """
+        Enables the internal pull-down resistor on the specified digital pin.
+        This is equivalent to setting pinMode(pin, INPUT_PULLDOWN) in Arduino,
+        but specifically for activating the pull-down.
+
+        :param pin: The number of the digital pin to configure.
+        :type pin: int
+
+        .. code-block:: python
+
+            # Enable pull-down on pin 3 for a button connected to VCC
+            hana.pull_down(3)
+            # Now, hana.read_pin(3) will return LOW when the button is not pressed,
+            # and HIGH when the button is pressed.
+        """
+        self.exec_func(16, pin)
+
+
+
+    def pull_clear(self, pin: int):
+        """
+        Deactivates the internal pull-up or pull-down resistor on the specified digital pin.
+
+        This effectively sets the pin to a standard input mode, removing any
+        active pull-up or pull-down configuration. It's functionally similar to Arduino's ``pinMode(pin, INPUT)``, specifically
+        for clearing pull-resistor settings.
+
+        :param pin: The number of the digital pin to clear the pull-resistor setting from.
+        :type pin: int
+
+        .. code-block:: python
+
+            # Enable pull-up on pin 2
+            hana.pull_up(2)
+            # Later, clear the pull-up/pull-down resistor setting on pin 2
+            hana.pull_clear(2)
+        """
+        self.exec_func(17, pin)
+
+
+    #☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷☷
+
+
 
 
 
@@ -258,22 +332,20 @@ class _HanaBase:
         self.exec_func(22, pin, freq)
 
 
-    def set_pwm_bits(self, pin:int, bits:int):
+    def set_pwm_resolution(self, bits:int):
         """
         Sets the range for the duty cycle used in :meth:`write_analog`.
 
-        :param pin: The pin to write to.
-        :type pin: int
         :param bits: The number of bits which defines the
                      PWM resolution (e.g., 8, 10, 12, etc).
         :type bits: int
         
         .. code-block:: python
 
-            # Set PWM resolution to 9-bits
-            hana.set_pwm_bits(9, 1023)
+            # Set PWM resolution to 11-bits
+            hana.set_pwm_bits(11)
             # Now set LED to 50% brightness with the new range
-            hana.write_analog(9, 512)
+            hana.write_analog(9, 1024)
         """
         self.exec_func(23, bits)
 
