@@ -472,7 +472,7 @@ IS_CPYTHON = (sys.implementation.name == "cpython")
 
 if IS_CPYTHON:
     
-    class Hana(_HanaBase, Chaino):
+    class Hana(Chaino, _HanaBase):
         """
         A high-level interface for controlling a Chaino_Hana board from CPython.
 
@@ -496,7 +496,9 @@ if IS_CPYTHON:
             
 else:
     
-    class Hana(_HanaBase, Chaino):
+    from machine import Pin
+
+    class Hana(Chaino, _HanaBase):
         """
         A high-level interface for controlling a Chaino Hana board from MicroPython.
 
@@ -512,9 +514,47 @@ else:
         :param i2c_addr: The I2C address of the target Chaino_Hana slave board.
         :type i2c_addr: int
         """
-        def __init__(self, i2c_addr: int):
+        def __init__(self, i2c_addr: int = 0):
             # MicroPython용 Chaino는 (slave_addr)만 받는다고 가정
             Chaino.__init__(self, i2c_addr)
+            self._dic_pins = {}
+                
+
+        def _set_out(self, pin:int, val:int):
+            dpins = self._dic_pins
+            if pin not in dpins or dpins[pin][0] != Pin.OUT:
+                gpio = Pin(pin, Pin.OUT)
+                dpins[pin] = [Pin.OUT, gpio]
+                gpio.value(val)
+            else:# _dic_pins[pin][0] == Pin.OUT 라면 이미 생성된 객체 사용
+                dpins[pin][1].value(val)
+
+        def _is_high(self, pin:int) -> bool:
+            dpins = self._dic_pins
+            # IN, PULL_UP, PULL_DOWN인 경우는 _dic_pin_mode[pin] 값 유지
+            if pin not in dpins or dpins[pin][0]==Pin.OUT:
+                dpins[pin] = [Pin.IN, Pin(pin, Pin.IN)]
+            return bool(dpins[pin][1].value())
+
+
+        def set_high(self, pin:int):
+            if self._addr == 0: self._set_out(pin, 1)
+            else: _HanaBase.set_high(self, pin)
+
+
+        def set_low(self, pin:int):
+            if self._addr == 0: self._set_out(pin, 0)
+            else: _HanaBase.set_low(self, pin)
+
+
+        def is_high(self, pin:int) -> bool:
+            if self._addr == 0: return self._is_high(pin)
+            else: return _HanaBase.is_high(self, pin)
+
+        def is_low(self, pin:int) -> bool:
+            return not self.is_high(pin)
+
+
 
 
 
